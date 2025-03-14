@@ -3,45 +3,45 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
 
-  // 定义组件属性
+  // Define component properties
   export let maxRating = 5;
   export let theme = 'light';
   export let callbackUrl = '';
 
-  // 创建事件分发器
+  // Create event dispatcher
   const dispatch = createEventDispatcher<{
     'rating-submitted': { rating: number }
   }>();
 
-  // 组件状态
+  // Component state
   let selectedRating = 0;
   let hoverRating = 0;
   let submitted = false;
   let submitting = false;
   let error = '';
 
-  // 处理星星悬停
+  // Handle star hover
   function handleMouseEnter(rating: number) {
     if (!submitted) {
       hoverRating = rating;
     }
   }
 
-  // 处理鼠标离开
+  // Handle mouse leave
   function handleMouseLeave() {
     if (!submitted) {
       hoverRating = 0;
     }
   }
 
-  // 处理星星点击
+  // Handle star click
   function handleClick(rating: number) {
     if (!submitted) {
       selectedRating = rating;
     }
   }
 
-  // 提交评分
+  // Submit rating
   async function submitRating() {
     if (!selectedRating || submitted || submitting) return;
     
@@ -65,7 +65,7 @@
       
       submitted = true;
       
-      // 触发自定义事件
+      // Trigger custom event
       dispatch('rating-submitted', { rating: selectedRating });
       
     } catch (err) {
@@ -177,7 +177,7 @@
     font-size: 0.8rem;
   }
   
-  /* 确保样式被封装在组件内 */
+  /* Ensure styles are encapsulated within the component */
   :global([data-theme="light"]) {
     --star-color: #ffb400;
     --bg-color: #ffffff;

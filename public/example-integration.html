@@ -82,19 +82,19 @@
   // Do something with the rating
 });</code></pre>
 
-  <!-- 引入评分组件 -->
+  <!-- Import rating component -->
   <script src="https://your-domain.vercel.app/rating-widget.umd.js"></script>
   
-  <!-- 本地开发时使用 -->
+  <!-- For local development -->
   <script>
-    // 如果组件未加载（例如在本地开发时），则从本地加载
+    // If the component is not loaded (e.g. during local development), load it from local
     if (!customElements.get('rating-widget')) {
       const script = document.createElement('script');
       script.src = './rating-widget.umd.cjs';
       document.head.appendChild(script);
     }
     
-    // 监听评分提交事件
+    // Listen for rating submission events
     document.addEventListener('rating-submitted', function(e) {
       console.log('Rating submitted:', e.detail);
       alert('Thank you for your rating of ' + e.detail.rating + ' stars!');

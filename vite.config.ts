@@ -17,17 +17,17 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        // 确保外部化处理那些你不想打包进库的依赖
+        // Ensure to externalize dependencies you don't want to bundle into your library
         globals: {
-          // 没有外部依赖
+          // No external dependencies
         }
       }
     },
-    // 将public目录下的文件复制到dist目录
+    // Copy files from public directory to dist directory
     copyPublicDir: true,
   },
   preview: {
-    // 设置预览服务器的默认页面
+    // Set the default page for the preview server
     open: '/test.html'
   }
 })
