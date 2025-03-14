@@ -2,46 +2,60 @@
 
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import { onMount } from 'svelte';
 
-  // Define component properties
-  export let maxRating = 5;
-  export let theme = 'light';
+  // 只保留回调URL属性
   export let callbackUrl = '';
 
-  // Create event dispatcher
+  // 创建事件分发器
   const dispatch = createEventDispatcher<{
     'rating-submitted': { rating: number }
   }>();
 
-  // Component state
+  // 组件状态
   let selectedRating = 0;
   let hoverRating = 0;
   let submitted = false;
   let submitting = false;
   let error = '';
+  let loaded = false;
 
-  // Handle star hover
+  // 固定星数为5
+  const maxRating = 5;
+
+  // 加载Skeleton Elements库
+  onMount(() => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = 'https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/css/skeleton-elements.css';
+    document.head.appendChild(link);
+    
+    // 标记为已加载
+    loaded = true;
+  });
+
+  // 处理星星悬停
   function handleMouseEnter(rating: number) {
     if (!submitted) {
       hoverRating = rating;
     }
   }
 
-  // Handle mouse leave
+  // 处理鼠标离开
   function handleMouseLeave() {
     if (!submitted) {
       hoverRating = 0;
     }
   }
 
-  // Handle star click
+  // 处理星星点击
   function handleClick(rating: number) {
     if (!submitted) {
       selectedRating = rating;
     }
   }
 
-  // Submit rating
+  // 提交评分
   async function submitRating() {
     if (!selectedRating || submitted || submitting) return;
     
@@ -65,7 +79,7 @@
       
       submitted = true;
       
-      // Trigger custom event
+      // 触发自定义事件
       dispatch('rating-submitted', { rating: selectedRating });
       
     } catch (err) {
@@ -76,35 +90,50 @@
   }
 </script>
 
-<div class="rating-widget" data-theme={theme}>
-  <div class="stars">
-    {#each Array(Number(maxRating)) as _, i}
-      {@const rating = i + 1}
-      <button
-        type="button"
-        class="star"
-        class:active={rating <= (hoverRating || selectedRating)}
-        class:selected={!hoverRating && rating <= selectedRating}
-        disabled={submitted}
-        on:mouseenter={() => handleMouseEnter(rating)}
-        on:mouseleave={handleMouseLeave}
-        on:click={() => handleClick(rating)}
-      >
-        ★
-      </button>
-    {/each}
+<div class="rating-widget">
+  <div class="stars-container">
+    <div class="stars">
+      {#each Array(maxRating) as _, i}
+        {@const rating = i + 1}
+        <button
+          type="button"
+          class="star"
+          class:active={rating <= (hoverRating || selectedRating)}
+          class:selected={!hoverRating && rating <= selectedRating}
+          disabled={submitted}
+          on:mouseenter={() => handleMouseEnter(rating)}
+          on:mouseleave={handleMouseLeave}
+          on:click={() => handleClick(rating)}
+          aria-label={`Rate ${rating} out of ${maxRating}`}
+        >
+          <span class="star-icon">★</span>
+        </button>
+      {/each}
+    </div>
   </div>
   
   {#if !submitted}
     <button 
-      class="submit-button" 
+      class="submit-button skeleton-button skeleton-button-rounded" 
       disabled={!selectedRating || submitting} 
       on:click={submitRating}
     >
-      {submitting ? 'Submitting...' : 'Submit Rating'}
+      {#if submitting}
+        <div class="skeleton-effect-blink">
+          <span class="skeleton-text">Submitting...</span>
+        </div>
+      {:else}
+        Submit Rating
+      {/if}
     </button>
   {:else}
-    <div class="thank-you">Thank you for your rating!</div>
+    <div class="thank-you">
+      <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+        <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+        <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+      </svg>
+      <span>Thank you for your feedback!</span>
+    </div>
   {/if}
   
   {#if error}
@@ -114,73 +143,147 @@
 
 <style>
   .rating-widget {
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    max-width: 320px;
     margin: 0 auto;
-    background-color: #fff;
+    background-color: #ffffff;
+    transition: all 0.3s ease;
+  }
+  
+  .stars-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
   }
   
   .stars {
     display: flex;
-    margin-bottom: 1rem;
+    justify-content: center;
+    gap: 0.5rem;
   }
   
   .star {
     background: none;
     border: none;
-    font-size: 2rem;
+    font-size: 0;
     cursor: pointer;
-    color: #ccc;
-    transition: color 0.2s;
-    padding: 0 0.25rem;
+    padding: 0;
+    transition: transform 0.2s ease;
+    position: relative;
   }
   
-  .star.active, .star.selected {
-    color: #ffb400;
+  .star:focus {
+    outline: none;
+  }
+  
+  .star:hover {
+    transform: scale(1.1);
+  }
+  
+  .star-icon {
+    font-size: 2.2rem;
+    color: #e0e0e0;
+    display: block;
+    line-height: 1;
+  }
+  
+  .star.active .star-icon {
+    color: #ff9500;
+  }
+  
+  .star.selected .star-icon {
+    color: #ff9500;
   }
   
   .submit-button {
-    padding: 0.5rem 1rem;
-    background-color: #4a90e2;
-    color: white;
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
     border: none;
-    border-radius: 4px;
+    background-color: #007aff;
+    color: white;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
+    -webkit-appearance: none;
+    appearance: none;
   }
   
   .submit-button:hover:not(:disabled) {
-    background-color: #3a80d2;
+    background-color: #0071e3;
+  }
+  
+  .submit-button:active:not(:disabled) {
+    transform: scale(0.98);
   }
   
   .submit-button:disabled {
-    background-color: #cccccc;
+    background-color: #d1d1d6;
     cursor: not-allowed;
+    opacity: 0.8;
   }
   
   .thank-you {
-    color: #4a90e2;
-    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #34c759;
+    font-weight: 500;
     margin: 0.5rem 0;
+    animation: fadeIn 0.5s ease-out;
   }
   
   .error {
-    color: #e74c3c;
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
+    color: #ff3b30;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    text-align: center;
+    animation: fadeIn 0.3s ease-out;
   }
   
-  /* Ensure styles are encapsulated within the component */
-  :global([data-theme="light"]) {
-    --star-color: #ffb400;
-    --bg-color: #ffffff;
-    --text-color: #333333;
+  /* 动画 */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* 成功勾选动画 */
+  .checkmark {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke: #34c759;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  }
+  
+  .checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 3;
+    stroke: #34c759;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+  }
+  
+  @keyframes stroke {
+    100% {
+      stroke-dashoffset: 0;
+    }
   }
 </style> 

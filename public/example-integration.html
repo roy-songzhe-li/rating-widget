@@ -4,38 +4,67 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rating Widget Integration Example</title>
+  <!-- 引入Skeleton Elements库 -->
+  <script type="module">
+    import 'https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/+esm';
+  </script>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       max-width: 800px;
       margin: 0 auto;
       padding: 2rem;
+      background-color: #f5f7fa;
+      color: #1c1c1e;
       line-height: 1.6;
     }
     
     h1, h2 {
-      color: #333;
+      color: #1c1c1e;
+      font-weight: 600;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    h2 {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+    
+    p {
+      margin-bottom: 1rem;
+      color: #3a3a3c;
     }
     
     .container {
-      border: 1px solid #ddd;
-      border-radius: 8px;
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
       padding: 2rem;
       margin: 2rem 0;
     }
     
     code {
-      background-color: #f5f5f5;
+      background-color: #f5f7fa;
       padding: 0.2rem 0.4rem;
-      border-radius: 3px;
-      font-family: monospace;
+      border-radius: 4px;
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      color: #007aff;
     }
     
     pre {
-      background-color: #f5f5f5;
+      background-color: #f5f7fa;
       padding: 1rem;
-      border-radius: 4px;
+      border-radius: 8px;
       overflow-x: auto;
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      margin: 1rem 0;
     }
     
     .widget-container {
@@ -43,58 +72,93 @@
       justify-content: center;
       margin: 2rem 0;
     }
+    
+    ul {
+      padding-left: 1.5rem;
+      margin: 1rem 0;
+    }
+    
+    li {
+      margin-bottom: 0.5rem;
+      color: #3a3a3c;
+    }
+    
+    .section {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    }
+    
+    .section h2 {
+      margin-top: 0;
+      color: #1c1c1e;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
   <h1>How to Integrate the Rating Widget</h1>
   
-  <p>
-    This example shows how to integrate the Rating Widget into your website.
-    Simply add the script tag and the custom element to your HTML.
-  </p>
+  <div class="section">
+    <p>
+      This example shows how to integrate the Rating Widget into your website.
+      Simply add the script tag and the custom element to your HTML.
+    </p>
+  </div>
   
-  <h2>Step 1: Add the Script</h2>
-  <pre><code>&lt;script src="https://your-domain.vercel.app/rating-widget.umd.js"&gt;&lt;/script&gt;</code></pre>
+  <div class="section">
+    <h2>Step 1: Add the Script</h2>
+    <pre><code>&lt;script src="https://your-domain.vercel.app/rating-widget.umd.js"&gt;&lt;/script&gt;</code></pre>
+  </div>
   
-  <h2>Step 2: Add the Widget</h2>
-  <pre><code>&lt;rating-widget max-rating="5" theme="light" callback-url="https://your-api.com/ratings"&gt;&lt;/rating-widget&gt;</code></pre>
+  <div class="section">
+    <h2>Step 2: Add the Widget</h2>
+    <pre><code>&lt;rating-widget callback-url="https://your-api.com/ratings"&gt;&lt;/rating-widget&gt;</code></pre>
+  </div>
   
-  <h2>Available Attributes</h2>
-  <ul>
-    <li><code>max-rating</code>: The maximum number of stars (default: 5)</li>
-    <li><code>theme</code>: The theme of the widget (default: "light")</li>
-    <li><code>callback-url</code>: The URL to send the rating data to (optional)</li>
-  </ul>
+  <div class="section">
+    <h2>Available Attributes</h2>
+    <ul>
+      <li><code>callback-url</code>: The URL to send the rating data to (optional)</li>
+    </ul>
+  </div>
   
-  <h2>Live Example</h2>
-  <div class="container">
-    <div class="widget-container">
-      <rating-widget max-rating="5" callback-url="https://example.com/api/ratings"></rating-widget>
+  <div class="section">
+    <h2>Live Example</h2>
+    <div class="container">
+      <div class="widget-container">
+        <rating-widget callback-url="https://example.com/api/ratings"></rating-widget>
+      </div>
     </div>
   </div>
   
-  <h2>Event Listening</h2>
-  <p>
-    You can listen for the <code>rating-submitted</code> event to get the rating value:
-  </p>
-  <pre><code>document.addEventListener('rating-submitted', function(e) {
+  <div class="section">
+    <h2>Event Listening</h2>
+    <p>
+      You can listen for the <code>rating-submitted</code> event to get the rating value:
+    </p>
+    <pre><code>document.addEventListener('rating-submitted', function(e) {
   console.log('Rating submitted:', e.detail.rating);
   // Do something with the rating
 });</code></pre>
+  </div>
 
-  <!-- Import rating component -->
+  <!-- 引入评分组件 -->
   <script src="https://your-domain.vercel.app/rating-widget.umd.js"></script>
   
-  <!-- For local development -->
+  <!-- 本地开发时使用 -->
   <script>
-    // If the component is not loaded (e.g. during local development), load it from local
+    // 如果组件未加载（例如在本地开发时），则从本地加载
     if (!customElements.get('rating-widget')) {
       const script = document.createElement('script');
       script.src = './rating-widget.umd.cjs';
       document.head.appendChild(script);
     }
     
-    // Listen for rating submission events
+    // 监听评分提交事件
     document.addEventListener('rating-submitted', function(e) {
       console.log('Rating submitted:', e.detail);
       alert('Thank you for your rating of ' + e.detail.rating + ' stars!');

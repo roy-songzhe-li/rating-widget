@@ -1,7 +1,7 @@
 import RatingWidget from './RatingWidget.svelte';
 
-// Ensure the component is correctly registered as a Web Component
+// 确保组件被正确注册为Web Component
 customElements.define('rating-widget', RatingWidget as any);
 
-// Export the component
+// 导出组件
 export default RatingWidget; 

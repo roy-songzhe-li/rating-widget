@@ -4,35 +4,62 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rating Widget Test</title>
+  <!-- 引入Skeleton Elements库 -->
+  <script type="module">
+    import 'https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/+esm';
+  </script>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       max-width: 800px;
       margin: 0 auto;
       padding: 2rem;
+      background-color: #f5f7fa;
+      color: #1c1c1e;
+      line-height: 1.5;
     }
     
     h1 {
       text-align: center;
       margin-bottom: 2rem;
+      font-weight: 600;
+      color: #1c1c1e;
     }
     
     .example {
       margin-bottom: 2rem;
-      padding: 1rem;
-      border: 1px solid #eee;
-      border-radius: 8px;
+      padding: 1.5rem;
+      border-radius: 12px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
     }
     
     .example h2 {
       margin-top: 0;
+      font-weight: 500;
+      color: #1c1c1e;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
     }
     
     pre {
-      background-color: #f5f5f5;
+      background-color: #f5f7fa;
       padding: 1rem;
-      border-radius: 4px;
+      border-radius: 8px;
       overflow-x: auto;
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      margin-top: 1.5rem;
+    }
+    
+    code {
+      color: #007aff;
+    }
+    
+    .widget-container {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
     }
   </style>
 </head>
@@ -41,27 +68,25 @@
   
   <div class="example">
     <h2>Default Usage</h2>
-    <rating-widget></rating-widget>
+    <div class="widget-container">
+      <rating-widget></rating-widget>
+    </div>
     <pre><code>&lt;rating-widget&gt;&lt;/rating-widget&gt;</code></pre>
   </div>
   
   <div class="example">
-    <h2>Custom Max Rating</h2>
-    <rating-widget max-rating="10"></rating-widget>
-    <pre><code>&lt;rating-widget max-rating="10"&gt;&lt;/rating-widget&gt;</code></pre>
-  </div>
-  
-  <div class="example">
     <h2>With Callback URL</h2>
-    <rating-widget callback-url="https://example.com/api/ratings"></rating-widget>
+    <div class="widget-container">
+      <rating-widget callback-url="https://example.com/api/ratings"></rating-widget>
+    </div>
     <pre><code>&lt;rating-widget callback-url="https://example.com/api/ratings"&gt;&lt;/rating-widget&gt;</code></pre>
   </div>
 
-  <!-- Import the built UMD component -->
+  <!-- 引入构建后的UMD组件 -->
   <script src="./rating-widget.umd.cjs"></script>
   
   <script>
-    // Listen for rating submission events
+    // 监听评分提交事件
     document.addEventListener('rating-submitted', function(e) {
       console.log('Rating submitted:', e.detail);
     });
