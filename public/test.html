@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rating Widget Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    
+    .example {
+      margin-bottom: 2rem;
+      padding: 1rem;
+      border: 1px solid #eee;
+      border-radius: 8px;
+    }
+    
+    .example h2 {
+      margin-top: 0;
+    }
+    
+    pre {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Rating Widget Test (UMD Build)</h1>
+  
+  <div class="example">
+    <h2>Default Usage</h2>
+    <rating-widget></rating-widget>
+    <pre><code>&lt;rating-widget&gt;&lt;/rating-widget&gt;</code></pre>
+  </div>
+  
+  <div class="example">
+    <h2>Custom Max Rating</h2>
+    <rating-widget max-rating="10"></rating-widget>
+    <pre><code>&lt;rating-widget max-rating="10"&gt;&lt;/rating-widget&gt;</code></pre>
+  </div>
+  
+  <div class="example">
+    <h2>With Callback URL</h2>
+    <rating-widget callback-url="https://example.com/api/ratings"></rating-widget>
+    <pre><code>&lt;rating-widget callback-url="https://example.com/api/ratings"&gt;&lt;/rating-widget&gt;</code></pre>
+  </div>
+
+  <!-- 引入构建后的UMD组件 -->
+  <script src="./rating-widget.umd.cjs"></script>
+  
+  <script>
+    // 监听评分提交事件
+    document.addEventListener('rating-submitted', function(e) {
+      console.log('Rating submitted:', e.detail);
+    });
+  </script>
+</body>
+</html> 

@@ -1,9 +1,10 @@
-import { mount } from 'svelte'
 import './app.css'
-import App from './App.svelte'
+import './lib/rating-widget'
 
-const app = mount(App, {
-  target: document.getElementById('app')!,
-})
+// 开发环境下的App组件不再需要
+// import App from './App.svelte'
+// const app = mount(App, {
+//   target: document.getElementById('app')!,
+// })
 
-export default app
+// export default app

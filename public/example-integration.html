@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rating Widget Integration Example</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+    
+    h1, h2 {
+      color: #333;
+    }
+    
+    .container {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+    
+    code {
+      background-color: #f5f5f5;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-family: monospace;
+    }
+    
+    pre {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    
+    .widget-container {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>How to Integrate the Rating Widget</h1>
+  
+  <p>
+    This example shows how to integrate the Rating Widget into your website.
+    Simply add the script tag and the custom element to your HTML.
+  </p>
+  
+  <h2>Step 1: Add the Script</h2>
+  <pre><code>&lt;script src="https://your-domain.vercel.app/rating-widget.umd.js"&gt;&lt;/script&gt;</code></pre>
+  
+  <h2>Step 2: Add the Widget</h2>
+  <pre><code>&lt;rating-widget max-rating="5" theme="light" callback-url="https://your-api.com/ratings"&gt;&lt;/rating-widget&gt;</code></pre>
+  
+  <h2>Available Attributes</h2>
+  <ul>
+    <li><code>max-rating</code>: The maximum number of stars (default: 5)</li>
+    <li><code>theme</code>: The theme of the widget (default: "light")</li>
+    <li><code>callback-url</code>: The URL to send the rating data to (optional)</li>
+  </ul>
+  
+  <h2>Live Example</h2>
+  <div class="container">
+    <div class="widget-container">
+      <rating-widget max-rating="5" callback-url="https://example.com/api/ratings"></rating-widget>
+    </div>
+  </div>
+  
+  <h2>Event Listening</h2>
+  <p>
+    You can listen for the <code>rating-submitted</code> event to get the rating value:
+  </p>
+  <pre><code>document.addEventListener('rating-submitted', function(e) {
+  console.log('Rating submitted:', e.detail.rating);
+  // Do something with the rating
+});</code></pre>
+
+  <!-- 引入评分组件 -->
+  <script src="https://your-domain.vercel.app/rating-widget.umd.js"></script>
+  
+  <!-- 本地开发时使用 -->
+  <script>
+    // 如果组件未加载（例如在本地开发时），则从本地加载
+    if (!customElements.get('rating-widget')) {
+      const script = document.createElement('script');
+      script.src = './rating-widget.umd.cjs';
+      document.head.appendChild(script);
+    }
+    
+    // 监听评分提交事件
+    document.addEventListener('rating-submitted', function(e) {
+      console.log('Rating submitted:', e.detail);
+      alert('Thank you for your rating of ' + e.detail.rating + ' stars!');
+    });
+  </script>
+</body>
+</html> 
