@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rating Widget - Web Component</title>
-    <!-- 引入Skeleton Elements库 -->
+    <!-- Import Skeleton Elements library -->
     <script type="module">
       import 'https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/+esm';
     </script>
@@ -57,10 +57,22 @@
         color: #007aff;
       }
       
+      /* We don't need this container anymore since the widget is fixed positioned */
       .widget-container {
-        display: flex;
-        justify-content: center;
+        height: 400px;
+        position: relative;
+        border: 1px dashed #ccc;
         margin: 1.5rem 0;
+        border-radius: 8px;
+      }
+      
+      /* Add note about fixed positioning */
+      .note {
+        background-color: #fff8e1;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #ffca28;
+        margin: 1rem 0;
       }
     </style>
   </head>
@@ -69,8 +81,8 @@
     
     <div class="example">
       <h2>Default Usage</h2>
-      <div class="widget-container">
-        <rating-widget></rating-widget>
+      <div class="note">
+        <strong>Note:</strong> The widget is now positioned in the bottom right corner of the page.
       </div>
       <pre><code>&lt;rating-widget&gt;&lt;/rating-widget&gt;</code></pre>
     </div>

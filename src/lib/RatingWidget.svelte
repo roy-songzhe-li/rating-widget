@@ -151,9 +151,15 @@
     border-radius: 12px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     max-width: 320px;
-    margin: 0 auto;
     background-color: #ffffff;
     transition: all 0.3s ease;
+    
+    /* Position the widget in the bottom right corner */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    margin: 0;
+    z-index: 1000;
   }
   
   .stars-container {
