@@ -4,12 +4,14 @@
   import { createEventDispatcher } from 'svelte';
   import { onMount } from 'svelte';
 
-  // Only keep the callback URL property
-  export let callbackUrl = '';
+  // Component properties
+  export let itemId = '';
+  export let callbackUrl = 'https://nodejs-serverless-function-express-opal-omega.vercel.app/api/saveRating';
+  export let userId = 'anonymous';
 
   // Create event dispatcher
   const dispatch = createEventDispatcher<{
-    'rating-submitted': { rating: number }
+    'rating-submitted': { itemId: string, rating: number, userId: string }
   }>();
 
   // Component state
@@ -23,12 +25,83 @@
   // Fixed number of stars: 5
   const maxRating = 5;
 
-  // Load Skeleton Elements library
+  // Generate or retrieve userId
+  function getOrCreateUserId() {
+    // If userId is already provided and not the default, use it
+    if (userId !== 'anonymous') return;
+    
+    try {
+      // Try to get existing userId from localStorage
+      const storedUserId = localStorage.getItem('rating_widget_user_id');
+      
+      if (storedUserId) {
+        userId = storedUserId;
+      } else {
+        // Generate a new userId
+        const randomPart = Math.random().toString(36).substring(2, 10);
+        const timestamp = Date.now();
+        userId = `user-${randomPart}-${timestamp}`;
+        
+        // Save to localStorage
+        localStorage.setItem('rating_widget_user_id', userId);
+      }
+      
+      console.log('User ID:', userId);
+    } catch (e) {
+      // If localStorage is not available (e.g., in private mode), continue with default
+      console.warn('Could not access localStorage, using default userId');
+    }
+  }
+
+  // Generate itemId if not provided - simplified to use main URL
+  function generateItemId() {
+    // If itemId is already provided, use it
+    if (itemId) return;
+    
+    try {
+      // Get the current URL
+      const url = new URL(window.location.href);
+      
+      // Extract the hostname and pathname (without query parameters or hash)
+      const hostname = url.hostname;
+      const pathname = url.pathname;
+      
+      // Clean the pathname (remove trailing slash if present)
+      const cleanPathname = pathname.endsWith('/') && pathname.length > 1 
+        ? pathname.slice(0, -1) 
+        : pathname;
+      
+      // Create a clean URL as the base for itemId
+      let urlBase = hostname + cleanPathname;
+      
+      // Remove any special characters that might cause issues
+      urlBase = urlBase.replace(/[^a-zA-Z0-9-_.]/g, '-');
+      
+      // Generate the final itemId
+      itemId = `url-${urlBase}`;
+      
+      console.log('Auto-generated itemId:', itemId);
+    } catch (e) {
+      // Fallback in case of any errors
+      console.warn('Error generating itemId from URL, using fallback method');
+      const timestamp = Date.now();
+      const random = Math.floor(Math.random() * 10000);
+      itemId = `page-${random}-${timestamp}`;
+    }
+  }
+
+  // Load Skeleton Elements library and generate itemId
   onMount(() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = 'https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/css/skeleton-elements.css';
     document.head.appendChild(link);
+    
+    // Generate itemId
+    generateItemId();
+    
+    // Get or create userId
+    getOrCreateUserId();
     
     // Mark as loaded
     loaded = true;
@@ -59,28 +132,40 @@
   async function submitRating() {
     if (!selectedRating || submitted || submitting) return;
     
+    // Ensure we have an itemId
+    if (!itemId) {
+      generateItemId();
+    }
+    
     submitting = true;
     error = '';
     
     try {
-      if (callbackUrl) {
-        const response = await fetch(callbackUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ rating: selectedRating }),
-        });
-        
-        if (!response.ok) {
-          throw new Error('Failed to submit rating');
-        }
+      // Send rating data to server
+      const response = await fetch(callbackUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          itemId, 
+          rating: selectedRating,
+          userId
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to submit rating');
       }
       
       submitted = true;
       
       // Trigger custom event
-      dispatch('rating-submitted', { rating: selectedRating });
+      dispatch('rating-submitted', { 
+        itemId,
+        rating: selectedRating,
+        userId
+      });
       
     } catch (err) {
       error = err instanceof Error ? err.message : 'An error occurred';
