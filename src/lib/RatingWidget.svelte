@@ -4,15 +4,15 @@
   import { createEventDispatcher } from 'svelte';
   import { onMount } from 'svelte';
 
-  // 只保留回调URL属性
+  // Only keep the callback URL property
   export let callbackUrl = '';
 
-  // 创建事件分发器
+  // Create event dispatcher
   const dispatch = createEventDispatcher<{
     'rating-submitted': { rating: number }
   }>();
 
-  // 组件状态
+  // Component state
   let selectedRating = 0;
   let hoverRating = 0;
   let submitted = false;
@@ -20,42 +20,42 @@
   let error = '';
   let loaded = false;
 
-  // 固定星数为5
+  // Fixed number of stars: 5
   const maxRating = 5;
 
-  // 加载Skeleton Elements库
+  // Load Skeleton Elements library
   onMount(() => {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = 'https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/css/skeleton-elements.css';
     document.head.appendChild(link);
     
-    // 标记为已加载
+    // Mark as loaded
     loaded = true;
   });
 
-  // 处理星星悬停
+  // Handle star hover
   function handleMouseEnter(rating: number) {
     if (!submitted) {
       hoverRating = rating;
     }
   }
 
-  // 处理鼠标离开
+  // Handle mouse leave
   function handleMouseLeave() {
     if (!submitted) {
       hoverRating = 0;
     }
   }
 
-  // 处理星星点击
+  // Handle star click
   function handleClick(rating: number) {
     if (!submitted) {
       selectedRating = rating;
     }
   }
 
-  // 提交评分
+  // Submit rating
   async function submitRating() {
     if (!selectedRating || submitted || submitting) return;
     
@@ -79,7 +79,7 @@
       
       submitted = true;
       
-      // 触发自定义事件
+      // Trigger custom event
       dispatch('rating-submitted', { rating: selectedRating });
       
     } catch (err) {
@@ -256,13 +256,13 @@
     animation: fadeIn 0.3s ease-out;
   }
   
-  /* 动画 */
+  /* Animations */
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
   
-  /* 成功勾选动画 */
+  /* Success checkmark animation */
   .checkmark {
     width: 36px;
     height: 36px;

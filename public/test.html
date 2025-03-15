@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rating Widget Test</title>
-  <!-- 引入Skeleton Elements库 -->
+  <!-- Import Skeleton Elements library -->
   <script type="module">
     import 'https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/+esm';
   </script>
@@ -82,11 +82,11 @@
     <pre><code>&lt;rating-widget callback-url="https://example.com/api/ratings"&gt;&lt;/rating-widget&gt;</code></pre>
   </div>
 
-  <!-- 引入构建后的UMD组件 -->
+  <!-- Import the built UMD component -->
   <script src="./rating-widget.umd.cjs"></script>
   
   <script>
-    // 监听评分提交事件
+    // Listen for rating submission events
     document.addEventListener('rating-submitted', function(e) {
       console.log('Rating submitted:', e.detail);
     });
