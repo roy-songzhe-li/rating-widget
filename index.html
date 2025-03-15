@@ -1,101 +1,594 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rating Widget - Web Component</title>
-    <!-- Import Skeleton Elements library -->
-    <script type="module">
-      import 'https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/+esm';
-    </script>
-    <style>
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 2rem;
-        background-color: #f5f7fa;
-        color: #1c1c1e;
-        line-height: 1.5;
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <title>Rating Widget Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+
+    /* Rating stars display */
+    .stars-display {
+      display: flex;
+      align-items: center;
+    }
+
+    .star {
+      color: #e0e0e0;
+      font-size: 1.5rem;
+      margin-right: 2px;
+    }
+
+    .star.filled {
+      color: #ffc107;
+    }
+
+    /* Rating bars */
+    .rating-bar-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .rating-label {
+      min-width: 30px;
+      text-align: right;
+      margin-right: 10px;
+      font-weight: 500;
+    }
+
+    .rating-bar-wrapper {
+      flex-grow: 1;
+      background-color: #e9ecef;
+      border-radius: 4px;
+      height: 12px;
+      overflow: hidden;
+    }
+
+    .rating-bar {
+      height: 100%;
+      background-color: #ffc107;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .rating-count {
+      min-width: 40px;
+      text-align: right;
+      margin-left: 10px;
+      font-size: 0.875rem;
+      color: #6c757d;
+    }
+
+    /* Table rating distribution */
+    .table-rating-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      max-width: 150px;
+    }
+
+    .table-rating-bar-container {
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+
+    .table-rating-label {
+      min-width: 12px;
+      margin-right: 4px;
+    }
+
+    .table-rating-bar-wrapper {
+      flex-grow: 1;
+      background-color: #e9ecef;
+      border-radius: 2px;
+      height: 4px;
+      overflow: hidden;
+    }
+
+    .table-rating-bar {
+      height: 100%;
+      background-color: #ffc107;
+      border-radius: 2px;
+    }
+
+    /* Actions column */
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+
+    /* Timestamp styles */
+    .timestamp-info {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+
+    .timestamp-label {
+      font-weight: 500;
+      margin-right: 5px;
+    }
+
+    .timestamp-value {
+      white-space: nowrap;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .display-4 {
+        font-size: 2.5rem;
       }
       
-      h1 {
-        text-align: center;
-        margin-bottom: 2rem;
-        font-weight: 600;
-        color: #1c1c1e;
+      .star {
+        font-size: 1.2rem;
       }
       
-      .example {
-        margin-bottom: 2rem;
-        padding: 1.5rem;
-        border-radius: 12px;
-        background-color: #ffffff;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      .timestamp-info {
+        font-size: 0.75rem;
       }
-      
-      .example h2 {
-        margin-top: 0;
-        font-weight: 500;
-        color: #1c1c1e;
-        font-size: 1.25rem;
-        margin-bottom: 1.5rem;
-      }
-      
-      pre {
-        background-color: #f5f7fa;
-        padding: 1rem;
-        border-radius: 8px;
-        overflow-x: auto;
-        font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size: 0.9rem;
-        margin-top: 1.5rem;
-      }
-      
-      code {
-        color: #007aff;
-      }
-      
-      /* We don't need this container anymore since the widget is fixed positioned */
-      .widget-container {
-        height: 400px;
-        position: relative;
-        border: 1px dashed #ccc;
-        margin: 1.5rem 0;
-        border-radius: 8px;
-      }
-      
-      /* Add note about fixed positioning */
-      .note {
-        background-color: #fff8e1;
-        padding: 1rem;
-        border-radius: 8px;
-        border-left: 4px solid #ffca28;
-        margin: 1rem 0;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Rating Widget Demo</h1>
-    
-    <div class="example">
-      <h2>Default Usage</h2>
-      <div class="note">
-        <strong>Note:</strong> The widget is now positioned in the bottom right corner of the page.
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <header class="mb-4">
+      <h1 class="text-center">Rating Widget Dashboard</h1>
+      <p class="text-center text-muted">View and manage all rating records</p>
+    </header>
+
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="h5 mb-0">Rating Records</h2>
+        <button id="refreshBtn" class="btn btn-sm btn-outline-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+          </svg>
+          Refresh
+        </button>
       </div>
-      <pre><code>&lt;rating-widget&gt;&lt;/rating-widget&gt;</code></pre>
+      <div class="card-body">
+        <div id="loadingSpinner" class="text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <p class="mt-2 text-muted">Loading rating data...</p>
+        </div>
+        
+        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+          Error loading rating data. Please try again.
+        </div>
+        
+        <div id="noDataMessage" class="alert alert-info d-none" role="alert">
+          No rating data available.
+        </div>
+        
+        <div id="ratingTableContainer" class="d-none">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Item ID</th>
+                  <th>Average Rating</th>
+                  <th>Total Ratings</th>
+                  <th>Rating Distribution</th>
+                  <th>Timestamps</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="ratingTableBody">
+                <!-- Rating data will be inserted here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
     
-    <div class="example">
-      <h2>With Callback URL</h2>
-      <div class="widget-container">
-        <rating-widget callback-url="https://example.com/api/ratings"></rating-widget>
+    <!-- Rating Details Modal -->
+    <div class="modal fade" id="ratingDetailsModal" tabindex="-1" aria-labelledby="ratingDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ratingDetailsModalLabel">Rating Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="modalLoadingSpinner" class="text-center py-3">
+              <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2 text-muted small">Loading details...</p>
+            </div>
+            
+            <div id="modalErrorMessage" class="alert alert-danger d-none" role="alert">
+              Error loading rating details. Please try again.
+            </div>
+            
+            <div id="ratingDetailsContent" class="d-none">
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h6 class="mb-0">Rating Summary</h6>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-flex align-items-center mb-3">
+                        <div class="display-4 me-3 fw-bold text-primary" id="detailsAverageRating">0.0</div>
+                        <div class="stars-display" id="detailsStarsDisplay"></div>
+                      </div>
+                      <p class="mb-1">Total ratings: <span id="detailsTotalRatings">0</span></p>
+                      <p class="mb-0">Item ID: <span id="detailsItemId">-</span></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h6 class="mb-0">Rating Distribution</h6>
+                    </div>
+                    <div class="card-body">
+                      <div id="detailsRatingBars"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Timestamps Section -->
+              <div class="card mb-3">
+                <div class="card-header">
+                  <h6 class="mb-0">Timestamps</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <p class="mb-1"><strong>Created:</strong> <span id="detailsCreatedAt">-</span></p>
+                    </div>
+                    <div class="col-md-6">
+                      <p class="mb-1"><strong>Last Updated:</strong> <span id="detailsUpdatedAt">-</span></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
       </div>
-      <pre><code>&lt;rating-widget callback-url="https://example.com/api/ratings"&gt;&lt;/rating-widget&gt;</code></pre>
     </div>
-    
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // API URL
+    const API_BASE_URL = 'https://nodejs-serverless-function-express-opal-omega.vercel.app/api';
+
+    // Correct API endpoint paths
+    const GET_ALL_RATINGS_ENDPOINT = '/getAllRatings'; // Endpoint to get all ratings
+    const GET_RATING_ENDPOINT = '/getRating'; // Endpoint to get a specific rating
+
+    // DOM Elements
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const errorMessage = document.getElementById('errorMessage');
+    const noDataMessage = document.getElementById('noDataMessage');
+    const ratingTableContainer = document.getElementById('ratingTableContainer');
+    const ratingTableBody = document.getElementById('ratingTableBody');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    // Modal Elements
+    const ratingDetailsModal = document.getElementById('ratingDetailsModal');
+    const modalLoadingSpinner = document.getElementById('modalLoadingSpinner');
+    const modalErrorMessage = document.getElementById('modalErrorMessage');
+    const ratingDetailsContent = document.getElementById('ratingDetailsContent');
+    const detailsAverageRating = document.getElementById('detailsAverageRating');
+    const detailsStarsDisplay = document.getElementById('detailsStarsDisplay');
+    const detailsTotalRatings = document.getElementById('detailsTotalRatings');
+    const detailsItemId = document.getElementById('detailsItemId');
+    const detailsRatingBars = document.getElementById('detailsRatingBars');
+    const detailsCreatedAt = document.getElementById('detailsCreatedAt');
+    const detailsUpdatedAt = document.getElementById('detailsUpdatedAt');
+
+    // Bootstrap Modal Instance
+    let modal;
+
+    // Initialize the dashboard
+    document.addEventListener('DOMContentLoaded', () => {
+      // 检查 Bootstrap 是否已加载
+      if (typeof bootstrap === 'undefined') {
+        console.error('Bootstrap is not loaded. Make sure the Bootstrap script is included before this script.');
+        errorMessage.textContent = 'Error: Bootstrap library not loaded. Please refresh the page or contact support.';
+        errorMessage.classList.remove('d-none');
+        return;
+      }
+
+      // Initialize Bootstrap modal
+      modal = new bootstrap.Modal(ratingDetailsModal);
+      
+      // Load initial data
+      loadRatingData();
+      
+      // Set up event listeners
+      refreshBtn.addEventListener('click', loadRatingData);
+    });
+
+    // Format date for display
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      
+      try {
+        const date = new Date(dateString);
+        return date.toLocaleString();
+      } catch (e) {
+        console.error('Error formatting date:', e);
+        return dateString;
+      }
+    }
+
+    // Load rating data from API
+    async function loadRatingData() {
+      showLoading();
+      
+      try {
+        // Use the correct API endpoint to get all ratings
+        const response = await fetch(`${API_BASE_URL}${GET_ALL_RATINGS_ENDPOINT}`);
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch rating data: ${response.status} ${response.statusText}`);
+        }
+        
+        const responseData = await response.json();
+        
+        // Extract items array from the response
+        let data = responseData.items || [];
+        
+        if (data && data.length > 0) {
+          // Sort data by updatedAt time (most recent first)
+          data = data.sort((a, b) => {
+            const dateA = a.updatedAt ? new Date(a.updatedAt).getTime() : 0;
+            const dateB = b.updatedAt ? new Date(b.updatedAt).getTime() : 0;
+            return dateB - dateA; // Descending order (newest first)
+          });
+          
+          displayRatingData(data);
+        } else {
+          showNoData();
+        }
+      } catch (error) {
+        console.error('Error loading rating data:', error);
+        errorMessage.textContent = `Error: ${error.message}`;
+        showError();
+      }
+    }
+
+    // Display rating data in the table
+    function displayRatingData(data) {
+      // Clear existing table rows
+      ratingTableBody.innerHTML = '';
+      
+      // Add rows for each rating item
+      data.forEach(item => {
+        const row = document.createElement('tr');
+        
+        // Calculate average rating if not provided
+        const avgRating = item.averageRating || calculateAverageRating(item.ratingCounts);
+        
+        // Format dates
+        const createdAt = formatDate(item.createdAt);
+        const updatedAt = formatDate(item.updatedAt);
+        
+        row.innerHTML = `
+          <td>${item.itemId}</td>
+          <td>
+            <div class="d-flex align-items-center">
+              <span class="fw-bold me-2">${avgRating.toFixed(1)}</span>
+              <div class="stars-display">
+                ${generateStarsHTML(avgRating)}
+              </div>
+            </div>
+          </td>
+          <td>${item.totalRatings}</td>
+          <td>
+            <div class="table-rating-bars">
+              ${generateTableRatingBarsHTML(item.ratingCounts)}
+            </div>
+          </td>
+          <td>
+            <div class="small text-muted">
+              <div>Created: ${createdAt}</div>
+              <div>Updated: ${updatedAt}</div>
+            </div>
+          </td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-outline-primary view-details-btn" data-item-id="${item.itemId}">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                </svg>
+              </button>
+            </div>
+          </td>
+        `;
+        
+        ratingTableBody.appendChild(row);
+      });
+      
+      // Add event listeners to view details buttons
+      document.querySelectorAll('.view-details-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const itemId = btn.getAttribute('data-item-id');
+          openRatingDetails(itemId);
+        });
+      });
+      
+      // Show the table
+      hideLoading();
+      ratingTableContainer.classList.remove('d-none');
+    }
+
+    // Open rating details modal
+    async function openRatingDetails(itemId) {
+      // Show modal
+      modal.show();
+      
+      // Show loading spinner
+      modalLoadingSpinner.classList.remove('d-none');
+      modalErrorMessage.classList.add('d-none');
+      ratingDetailsContent.classList.add('d-none');
+      
+      try {
+        // Fetch rating details for the specific item
+        const response = await fetch(`${API_BASE_URL}${GET_RATING_ENDPOINT}?itemId=${encodeURIComponent(itemId)}`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch rating details');
+        }
+        
+        const data = await response.json();
+        
+        // Display rating details
+        displayRatingDetails(data);
+      } catch (error) {
+        console.error('Error loading rating details:', error);
+        modalLoadingSpinner.classList.add('d-none');
+        modalErrorMessage.classList.remove('d-none');
+      }
+    }
+
+    // Display rating details in the modal
+    function displayRatingDetails(data) {
+      // Set item ID
+      detailsItemId.textContent = data.itemId;
+      
+      // Set average rating
+      detailsAverageRating.textContent = data.averageRating.toFixed(1);
+      
+      // Set total ratings
+      detailsTotalRatings.textContent = data.totalRatings;
+      
+      // Set dates if available
+      if (detailsCreatedAt) {
+        detailsCreatedAt.textContent = formatDate(data.createdAt);
+      }
+      
+      if (detailsUpdatedAt) {
+        detailsUpdatedAt.textContent = formatDate(data.updatedAt);
+      }
+      
+      // Generate stars display
+      detailsStarsDisplay.innerHTML = generateStarsHTML(data.averageRating);
+      
+      // Generate rating bars
+      detailsRatingBars.innerHTML = generateRatingBarsHTML(data.ratingCounts, data.totalRatings);
+      
+      // Hide loading spinner and show content
+      modalLoadingSpinner.classList.add('d-none');
+      ratingDetailsContent.classList.remove('d-none');
+    }
+
+    // Generate HTML for star rating display
+    function generateStarsHTML(rating) {
+      let starsHTML = '';
+      
+      for (let i = 1; i <= 5; i++) {
+        const starClass = i <= Math.round(rating) ? 'filled' : '';
+        starsHTML += `<span class="star ${starClass}">★</span>`;
+      }
+      
+      return starsHTML;
+    }
+
+    // Generate HTML for rating distribution bars in table
+    function generateTableRatingBarsHTML(ratingCounts) {
+      let barsHTML = '';
+      const maxCount = Math.max(...Object.values(ratingCounts));
+      
+      for (let i = 5; i >= 1; i--) {
+        const count = ratingCounts[i] || 0;
+        const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
+        
+        barsHTML += `
+          <div class="table-rating-bar-container">
+            <span class="table-rating-label">${i}</span>
+            <div class="table-rating-bar-wrapper">
+              <div class="table-rating-bar" style="width: ${percentage}%"></div>
+            </div>
+          </div>
+        `;
+      }
+      
+      return barsHTML;
+    }
+
+    // Generate HTML for rating distribution bars in modal
+    function generateRatingBarsHTML(ratingCounts, totalRatings) {
+      let barsHTML = '';
+      
+      for (let i = 5; i >= 1; i--) {
+        const count = ratingCounts[i] || 0;
+        const percentage = totalRatings > 0 ? (count / totalRatings) * 100 : 0;
+        
+        barsHTML += `
+          <div class="rating-bar-container">
+            <span class="rating-label">${i}★</span>
+            <div class="rating-bar-wrapper">
+              <div class="rating-bar" style="width: ${percentage}%"></div>
+            </div>
+            <span class="rating-count">${count}</span>
+          </div>
+        `;
+      }
+      
+      return barsHTML;
+    }
+
+    // Calculate average rating from rating counts
+    function calculateAverageRating(ratingCounts) {
+      let totalScore = 0;
+      let totalCount = 0;
+      
+      for (let i = 1; i <= 5; i++) {
+        const count = ratingCounts[i] || 0;
+        totalScore += i * count;
+        totalCount += count;
+      }
+      
+      return totalCount > 0 ? totalScore / totalCount : 0;
+    }
+
+    // Show loading state
+    function showLoading() {
+      loadingSpinner.classList.remove('d-none');
+      errorMessage.classList.add('d-none');
+      noDataMessage.classList.add('d-none');
+      ratingTableContainer.classList.add('d-none');
+    }
+
+    // Hide loading state
+    function hideLoading() {
+      loadingSpinner.classList.add('d-none');
+    }
+
+    // Show error message
+    function showError() {
+      hideLoading();
+      errorMessage.classList.remove('d-none');
+    }
+
+    // Show no data message
+    function showNoData() {
+      hideLoading();
+      noDataMessage.classList.remove('d-none');
+    }
+  </script>
+</body>
 </html>
