@@ -143,6 +143,26 @@
       <p class="text-center text-muted">View and manage all rating records</p>
     </header>
 
+    <!-- 添加测试评分组件 -->
+    <div class="card mb-4">
+      <div class="card-header">
+        <h2 class="h5 mb-0">Test Rating Widget</h2>
+      </div>
+      <div class="card-body">
+        <p>Below is a test instance of the rating widget component. You can use it to test the functionality.</p>
+        <div class="d-flex justify-content-center my-4">
+          <rating-widget 
+            item-id="test-item-123" 
+            callback-url="https://nodejs-serverless-function-express-opal-omega.vercel.app/api/saveRating"
+            user-id="test-user-456">
+          </rating-widget>
+        </div>
+        <div class="alert alert-info">
+          <strong>Note:</strong> Open the browser console (F12) to see debug information when submitting a rating.
+        </div>
+      </div>
+    </div>
+
     <div class="card mb-4">
       <div class="card-header d-flex justify-content-between align-items-center">
         <h2 class="h5 mb-0">Rating Records</h2>
@@ -268,6 +288,8 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 引入评分组件 -->
+  <script type="module" src="/src/main.ts"></script>
   <script>
     // API URL
     const API_BASE_URL = 'https://nodejs-serverless-function-express-opal-omega.vercel.app/api';
@@ -589,6 +611,15 @@
       hideLoading();
       noDataMessage.classList.remove('d-none');
     }
+
+    // 添加事件监听器，监听评分提交事件
+    document.querySelector('rating-widget').addEventListener('rating-submitted', (event) => {
+      console.log('Rating submitted event:', event.detail);
+      // 可以在这里添加额外的处理逻辑，例如刷新评分数据
+      setTimeout(() => {
+        loadRatingData();
+      }, 1000);
+    });
   </script>
 </body>
 </html>
