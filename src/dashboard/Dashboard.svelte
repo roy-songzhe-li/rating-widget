@@ -199,14 +199,8 @@
   </div>
   
   <div class="widget-test-section">
-    <h2>Test Rating Widget</h2>
-    <p>This is how the Rating Widget will appear on your website:</p>
-    <div class="widget-preview">
-      <rating-widget></rating-widget>
-    </div>
-    
+    <h2>Installation Guide</h2>
     <div class="installation-guide">
-      <h3>Installation Guide</h3>
       <p>Add the following code to your website to install the Rating Widget:</p>
       <pre><code>&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
 &lt;rating-widget&gt;&lt;/rating-widget&gt;</code></pre>
@@ -485,28 +479,16 @@
     margin: 0 0 1rem;
   }
   
-  .widget-preview {
-    background-color: white;
-    border-radius: 8px;
-    padding: 2rem;
-    margin: 1.5rem 0;
-    position: relative;
-    height: 200px;
-    border: 1px dashed #ddd;
-  }
-  
   .installation-guide {
     background-color: white;
     border-radius: 8px;
     padding: 1.5rem;
-    margin-top: 1.5rem;
+    margin-top: 0;
   }
   
-  .installation-guide h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: #333;
+  .installation-guide p {
     margin: 0 0 1rem;
+    color: #333;
   }
   
   .installation-guide pre {
