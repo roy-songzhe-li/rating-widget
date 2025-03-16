@@ -5,6 +5,19 @@
   let items = [];
   let isLoading = true;
   let error = null;
+  let sortOption = 'updatedAt'; // Default sort by last updated
+  
+  // Sort options
+  const sortOptions = [
+    { value: 'updatedAt', label: 'Last Updated (Newest)' },
+    { value: 'updatedAt_asc', label: 'Last Updated (Oldest)' },
+    { value: 'createdAt', label: 'Created Date (Newest)' },
+    { value: 'createdAt_asc', label: 'Created Date (Oldest)' },
+    { value: 'averageRating', label: 'Highest Rating' },
+    { value: 'averageRating_asc', label: 'Lowest Rating' },
+    { value: 'totalRatings', label: 'Most Ratings' },
+    { value: 'totalRatings_asc', label: 'Least Ratings' }
+  ];
   
   // API endpoint - use relative path for development, absolute for production
   const BASE_URL = import.meta.env.DEV 
@@ -36,12 +49,46 @@
       
       const data = await response.json();
       items = data.items || [];
+      sortItems(); // Sort items after fetching
     } catch (err) {
       console.error('Error fetching ratings:', err);
       error = err.message;
     } finally {
       isLoading = false;
     }
+  }
+  
+  // Sort items based on selected option
+  function sortItems() {
+    const [field, direction] = sortOption.includes('_asc') 
+      ? [sortOption.replace('_asc', ''), 'asc'] 
+      : [sortOption, 'desc'];
+    
+    items = [...items].sort((a, b) => {
+      let valueA, valueB;
+      
+      // Handle date fields
+      if (field === 'updatedAt' || field === 'createdAt') {
+        valueA = new Date(a[field]).getTime();
+        valueB = new Date(b[field]).getTime();
+      } else {
+        valueA = a[field];
+        valueB = b[field];
+      }
+      
+      // Sort based on direction
+      if (direction === 'asc') {
+        return valueA - valueB;
+      } else {
+        return valueB - valueA;
+      }
+    });
+  }
+  
+  // Handle sort change
+  function handleSortChange(event) {
+    sortOption = event.target.value;
+    sortItems();
   }
   
   // Format date
@@ -60,12 +107,22 @@
 <div class="dashboard-container">
   <header class="dashboard-header">
     <h1>Rating Dashboard</h1>
-    <button class="refresh-button" on:click={fetchAllRatings}>
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-      </svg>
-      Refresh
-    </button>
+    <div class="dashboard-controls">
+      <div class="sort-control">
+        <label for="sort-select">Sort by:</label>
+        <select id="sort-select" value={sortOption} on:change={handleSortChange}>
+          {#each sortOptions as option}
+            <option value={option.value}>{option.label}</option>
+          {/each}
+        </select>
+      </div>
+      <button class="refresh-button" on:click={fetchAllRatings}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
   </header>
   
   <div class="dashboard-content">
@@ -124,8 +181,15 @@
             </div>
             
             <div class="rating-footer">
-              <div class="timestamp">
-                <span>Last updated: {formatDate(item.updatedAt)}</span>
+              <div class="timestamps">
+                <div class="timestamp">
+                  <span class="timestamp-label">Created:</span>
+                  <span class="timestamp-value">{formatDate(item.createdAt)}</span>
+                </div>
+                <div class="timestamp">
+                  <span class="timestamp-label">Last updated:</span>
+                  <span class="timestamp-value">{formatDate(item.updatedAt)}</span>
+                </div>
               </div>
             </div>
           </div>
@@ -170,6 +234,38 @@
     font-weight: 700;
     color: #333;
     margin: 0;
+  }
+  
+  .dashboard-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .sort-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .sort-control label {
+    font-size: 0.875rem;
+    color: #666;
+  }
+  
+  .sort-control select {
+    background-color: #f5f5f7;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #333;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
   }
   
   .refresh-button {
@@ -355,9 +451,24 @@
   .rating-footer {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     font-size: 0.75rem;
     color: #999;
+  }
+  
+  .timestamps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .timestamp {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  .timestamp-label {
+    font-weight: 500;
   }
   
   .widget-test-section {
