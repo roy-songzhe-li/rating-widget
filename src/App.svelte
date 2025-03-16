@@ -1,16 +1,22 @@
-<script lang="ts">
-  import Dashboard from './lib/components/Dashboard.svelte';
+<script>
+  import Dashboard from './dashboard/Dashboard.svelte';
+  import './rating-widget/index.js';
 </script>
 
-<Dashboard>
-  <rating-widget 
-    slot="rating-widget"
-    item-id="test-item-123" 
-    callback-url="https://nodejs-serverless-function-express-opal-omega.vercel.app/api/saveRating"
-    user-id="test-user-456">
-  </rating-widget>
-</Dashboard>
+<main>
+  <Dashboard />
+</main>
 
 <style>
-  /* Add your global styles here if needed */
+  :global(body) {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f7;
+    color: #333;
+  }
+  
+  main {
+    width: 100%;
+    min-height: 100vh;
+  }
 </style>
