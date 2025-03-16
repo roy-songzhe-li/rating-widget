@@ -15,8 +15,10 @@
   let submitError = false;
   let errorMessage = '';
   
-  // API endpoint
-  const API_URL = 'https://nodejs-serverless-function-express-opal-omega.vercel.app/api';
+  // API endpoint - use relative path for development, absolute for production
+  const BASE_URL = import.meta.env.DEV 
+    ? '' 
+    : 'https://nodejs-serverless-function-express-opal-omega.vercel.app';
   
   onMount(() => {
     // Generate a random user ID
@@ -25,22 +27,33 @@
     // Get the item ID from the current URL
     itemId = window.location.hostname;
     
-    // Check if user has already rated
-    checkUserRating();
+    // For local development, use a test itemId
+    if (itemId === 'localhost') {
+      itemId = 'localhost-test';
+    }
+    
+    // Check if user has already rated using localStorage
+    checkLocalRating();
   });
   
-  // Check if user has already rated this item
-  async function checkUserRating() {
+  // Check if user has already rated this item using localStorage
+  function checkLocalRating() {
     try {
-      const response = await fetch(`${API_URL}/getUserRating?itemId=${itemId}&userId=${userId}`);
-      const data = await response.json();
+      // Create a unique key for this item and user
+      const storageKey = `rating_${itemId}`;
       
-      if (data.hasRated) {
-        rating = data.rating;
+      // Try to get the rating from localStorage
+      const storedRating = localStorage.getItem(storageKey);
+      
+      if (storedRating) {
+        // Parse the stored data
+        const ratingData = JSON.parse(storedRating);
+        rating = ratingData.rating;
         hasRated = true;
       }
     } catch (error) {
-      console.error('Error checking user rating:', error);
+      console.error('Error checking local rating:', error);
+      // Continue without showing error to user
     }
   }
   
@@ -74,10 +87,23 @@
     submitError = false;
     
     try {
-      const response = await fetch(`${API_URL}/saveRating`, {
+      // Save rating to localStorage first
+      const storageKey = `rating_${itemId}`;
+      const ratingData = {
+        rating,
+        userId,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem(storageKey, JSON.stringify(ratingData));
+      
+      // Then submit to API
+      const response = await fetch(`${BASE_URL}/api/saveRating`, {
         method: 'POST',
+        mode: 'cors',
+        credentials: 'omit',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           itemId,
@@ -93,14 +119,21 @@
           isOpen = false;
         }, 2000);
       } else {
-        const errorData = await response.json();
+        const errorData = await response.json().catch(() => ({ message: 'Failed to parse error response' }));
         submitError = true;
-        errorMessage = errorData.message || 'Failed to submit rating';
+        errorMessage = errorData.message || `Failed to submit rating (Status: ${response.status})`;
       }
     } catch (error) {
-      submitError = true;
-      errorMessage = 'Network error. Please try again.';
-      console.error('Error submitting rating:', error);
+      // Even if API call fails, we've saved to localStorage
+      // so we can still show success to the user
+      hasRated = true;
+      submitSuccess = true;
+      setTimeout(() => {
+        isOpen = false;
+      }, 2000);
+      
+      // Log the error but don't show to user
+      console.error('Error submitting rating to API:', error);
     } finally {
       isSubmitting = false;
     }

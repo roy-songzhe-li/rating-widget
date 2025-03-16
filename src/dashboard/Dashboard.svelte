@@ -6,8 +6,10 @@
   let isLoading = true;
   let error = null;
   
-  // API endpoint
-  const API_URL = 'https://nodejs-serverless-function-express-opal-omega.vercel.app/api';
+  // API endpoint - use relative path for development, absolute for production
+  const BASE_URL = import.meta.env.DEV 
+    ? '' 
+    : 'https://nodejs-serverless-function-express-opal-omega.vercel.app';
   
   onMount(async () => {
     await fetchAllRatings();
@@ -19,10 +21,17 @@
     error = null;
     
     try {
-      const response = await fetch(`${API_URL}/getAllRatings`);
+      const response = await fetch(`${BASE_URL}/api/getAllRatings`, {
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'omit',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
       
       if (!response.ok) {
-        throw new Error('Failed to fetch ratings');
+        throw new Error(`Failed to fetch ratings (Status: ${response.status})`);
       }
       
       const data = await response.json();

@@ -8,6 +8,15 @@ export default defineConfig({
     svelte(),
     tailwindcss(),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://nodejs-serverless-function-express-opal-omega.vercel.app',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  },
   build: {
     rollupOptions: {
       input: {
