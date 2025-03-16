@@ -1,6 +1,6 @@
 import './RatingWidget.svelte';
 
-// 安全地添加外部CSS
+// Safely add external CSS
 function addExternalCSS(href) {
   try {
     const linkElement = document.createElement('link');
@@ -14,8 +14,8 @@ function addExternalCSS(href) {
   }
 }
 
-// 添加必要的CSS
+// Add necessary CSS
 addExternalCSS('https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/css/skeleton-elements.css');
 
-// 初始化完成
+// Initialization complete
 console.log('Rating Widget loaded successfully! v1.0.0'); 

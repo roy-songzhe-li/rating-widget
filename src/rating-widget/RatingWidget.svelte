@@ -249,7 +249,7 @@
 </div>
 
 <style>
-  /* 确保所有样式都在组件内部，避免与宿主页面冲突 */
+  /* Ensure all styles are contained within the component to avoid conflicts with host page */
   :host {
     display: block;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;

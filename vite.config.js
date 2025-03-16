@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import { svelte } from '@sveltejs/vite-plugin-svelte'
 import tailwindcss from '@tailwindcss/vite'
 
-// 检查是否是构建widget
+// Check if building widget
 const isWidget = process.env.BUILD_TARGET === 'widget';
 
 // https://vite.dev/config/
@@ -22,7 +22,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      // 根据构建目标选择入口点
+      // Choose entry point based on build target
       input: isWidget 
         ? 'src/rating-widget/index.js'
         : {
@@ -35,11 +35,11 @@ export default defineConfig({
         format: isWidget ? 'iife' : undefined,
       }
     },
-    // 确保生成的代码可以在任何环境中运行
+    // Ensure generated code runs in any environment
     target: 'es2015',
-    // 最小化代码体积
+    // Minimize code size
     minify: true,
-    // 生成sourcemap以便调试
+    // Generate sourcemap for debugging
     sourcemap: true
   }
 })
