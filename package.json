@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:widget && vite build && node deploy.js",
+    "build:widget": "cross-env BUILD_TARGET=widget vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@melt-ui/pp": "^0.3.2",
     "@melt-ui/svelte": "^0.86.4",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "cross-env": "^7.0.3",
     "svelte": "^5.20.2",
     "vite": "^6.2.0"
   },

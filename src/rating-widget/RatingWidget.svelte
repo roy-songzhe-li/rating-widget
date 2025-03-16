@@ -15,25 +15,30 @@
   let submitError = false;
   let errorMessage = '';
   
-  // API endpoint - use relative path for development, absolute for production
-  const BASE_URL = import.meta.env.DEV 
-    ? '' 
-    : 'https://nodejs-serverless-function-express-opal-omega.vercel.app';
+  // API endpoint - always use absolute URL for cross-origin compatibility
+  const API_URL = 'https://nodejs-serverless-function-express-opal-omega.vercel.app/api';
   
   onMount(() => {
-    // Generate a random user ID
-    userId = 'user-' + Math.random().toString(36).substring(2, 15);
-    
-    // Get the item ID from the current URL
-    itemId = window.location.hostname;
-    
-    // For local development, use a test itemId
-    if (itemId === 'localhost') {
-      itemId = 'localhost-test';
+    try {
+      // Generate a random user ID
+      userId = 'user-' + Math.random().toString(36).substring(2, 15);
+      
+      // Get the item ID from the current URL
+      itemId = window.location.hostname;
+      
+      // For local development, use a test itemId
+      if (itemId === 'localhost') {
+        itemId = 'localhost-test';
+      }
+      
+      // Check if user has already rated using localStorage
+      checkLocalRating();
+      
+      // Log successful initialization
+      console.log('Rating Widget initialized for:', itemId);
+    } catch (error) {
+      console.error('Error initializing Rating Widget:', error);
     }
-    
-    // Check if user has already rated using localStorage
-    checkLocalRating();
   });
   
   // Check if user has already rated this item using localStorage
@@ -87,23 +92,28 @@
     submitError = false;
     
     try {
-      // Save rating to localStorage first
-      const storageKey = `rating_${itemId}`;
-      const ratingData = {
-        rating,
-        userId,
-        timestamp: new Date().toISOString()
-      };
-      localStorage.setItem(storageKey, JSON.stringify(ratingData));
+      // Save rating to localStorage first (if available)
+      try {
+        const storageKey = `rating_${itemId}`;
+        const ratingData = {
+          rating,
+          userId,
+          timestamp: new Date().toISOString()
+        };
+        localStorage.setItem(storageKey, JSON.stringify(ratingData));
+      } catch (storageError) {
+        console.warn('Could not save to localStorage:', storageError);
+      }
       
       // Then submit to API
-      const response = await fetch(`${BASE_URL}/api/saveRating`, {
+      const response = await fetch(`${API_URL}/saveRating`, {
         method: 'POST',
         mode: 'cors',
         credentials: 'omit',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Origin': window.location.origin
         },
         body: JSON.stringify({
           itemId,
@@ -119,12 +129,20 @@
           isOpen = false;
         }, 2000);
       } else {
-        const errorData = await response.json().catch(() => ({ message: 'Failed to parse error response' }));
+        // Try to parse error response
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          errorData = { message: 'Failed to parse error response' };
+        }
+        
         submitError = true;
         errorMessage = errorData.message || `Failed to submit rating (Status: ${response.status})`;
+        console.error('API error:', errorMessage);
       }
     } catch (error) {
-      // Even if API call fails, we've saved to localStorage
+      // Even if API call fails, we've tried to save to localStorage
       // so we can still show success to the user
       hasRated = true;
       submitSuccess = true;
@@ -231,6 +249,12 @@
 </div>
 
 <style>
+  /* 确保所有样式都在组件内部，避免与宿主页面冲突 */
+  :host {
+    display: block;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+  
   .rating-widget-container {
     position: fixed;
     bottom: 20px;
