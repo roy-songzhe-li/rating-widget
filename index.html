@@ -5,23 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
   <title>Rating Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Import Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
   <style>
+    /* Base styles */
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
       background-color: #f8f9fa;
       color: #212529;
     }
 
-    /* Rating stars display */
-    .stars-display {
-      display: flex;
-      align-items: center;
-    }
-
+    /* Star rating display */
     .star {
       color: #e0e0e0;
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       margin-right: 2px;
     }
 
@@ -29,181 +28,88 @@
       color: #ffc107;
     }
 
-    /* Rating bars */
-    .rating-bar-container {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
+    /* Animation for loading spinner */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
-
-    .rating-label {
-      min-width: 30px;
-      text-align: right;
-      margin-right: 10px;
-      font-weight: 500;
-    }
-
-    .rating-bar-wrapper {
-      flex-grow: 1;
-      background-color: #e9ecef;
-      border-radius: 4px;
-      height: 12px;
-      overflow: hidden;
-    }
-
-    .rating-bar {
-      height: 100%;
-      background-color: #ffc107;
-      border-radius: 4px;
-      transition: width 0.3s ease;
-    }
-
-    .rating-count {
-      min-width: 40px;
-      text-align: right;
-      margin-left: 10px;
-      font-size: 0.875rem;
-      color: #6c757d;
-    }
-
-    /* Table rating distribution */
-    .table-rating-bars {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      max-width: 150px;
-    }
-
-    .table-rating-bar-container {
-      display: flex;
-      align-items: center;
-      font-size: 0.75rem;
-    }
-
-    .table-rating-label {
-      min-width: 12px;
-      margin-right: 4px;
-    }
-
-    .table-rating-bar-wrapper {
-      flex-grow: 1;
-      background-color: #e9ecef;
-      border-radius: 2px;
-      height: 4px;
-      overflow: hidden;
-    }
-
-    .table-rating-bar {
-      height: 100%;
-      background-color: #ffc107;
-      border-radius: 2px;
-    }
-
-    /* Actions column */
-    .action-buttons {
-      display: flex;
-      gap: 5px;
-    }
-
-    /* Timestamp styles */
-    .timestamp-info {
-      font-size: 0.85rem;
-      color: #6c757d;
-    }
-
-    .timestamp-label {
-      font-weight: 500;
-      margin-right: 5px;
-    }
-
-    .timestamp-value {
-      white-space: nowrap;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-      .display-4 {
-        font-size: 2.5rem;
-      }
-      
-      .star {
-        font-size: 1.2rem;
-      }
-      
-      .timestamp-info {
-        font-size: 0.75rem;
-      }
+    .animate-spin {
+      animation: spin 1s linear infinite;
     }
   </style>
 </head>
-<body>
-  <div class="container mt-4">
-    <header class="mb-4">
-      <h1 class="text-center">Rating Widget Dashboard</h1>
-      <p class="text-center text-muted">View and manage all rating records</p>
+<body class="bg-gray-50">
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-center text-gray-800">Rating Widget Dashboard</h1>
+      <p class="text-center text-gray-600 mt-2">View and manage all rating records</p>
     </header>
 
-    <!-- 添加测试评分组件 -->
-    <div class="card mb-4">
-      <div class="card-header">
-        <h2 class="h5 mb-0">Test Rating Widget</h2>
+    <!-- Test Rating Widget -->
+    <div class="bg-white rounded-lg shadow-md mb-8 overflow-hidden">
+      <div class="bg-gray-100 px-4 py-3 border-b">
+        <h2 class="text-lg font-medium text-gray-800">Test Rating Widget</h2>
       </div>
-      <div class="card-body">
-        <p>Below is a test instance of the rating widget component. You can use it to test the functionality.</p>
-        <div class="d-flex justify-content-center my-4">
+      <div class="p-4">
+        <p class="text-gray-700 mb-4">Below is a test instance of the rating widget component. You can use it to test the functionality.</p>
+        <div class="flex justify-center my-6">
           <rating-widget 
             item-id="test-item-123" 
             callback-url="https://nodejs-serverless-function-express-opal-omega.vercel.app/api/saveRating"
             user-id="test-user-456">
           </rating-widget>
         </div>
-        <div class="alert alert-info">
+        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 text-sm text-blue-700">
           <strong>Note:</strong> Open the browser console (F12) to see debug information when submitting a rating.
         </div>
       </div>
     </div>
 
-    <div class="card mb-4">
-      <div class="card-header d-flex justify-content-between align-items-center">
-        <h2 class="h5 mb-0">Rating Records</h2>
-        <button id="refreshBtn" class="btn btn-sm btn-outline-primary">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+    <!-- Rating Records -->
+    <div class="bg-white rounded-lg shadow-md mb-8 overflow-hidden">
+      <div class="bg-gray-100 px-4 py-3 border-b flex justify-between items-center">
+        <h2 class="text-lg font-medium text-gray-800">Rating Records</h2>
+        <button id="refreshBtn" class="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
           Refresh
         </button>
       </div>
-      <div class="card-body">
-        <div id="loadingSpinner" class="text-center py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-          <p class="mt-2 text-muted">Loading rating data...</p>
+      <div class="p-4">
+        <!-- Loading Spinner -->
+        <div id="loadingSpinner" class="py-12 text-center">
+          <svg class="animate-spin h-8 w-8 text-indigo-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <p class="mt-3 text-gray-600">Loading rating data...</p>
         </div>
         
-        <div id="errorMessage" class="alert alert-danger d-none" role="alert">
+        <!-- Error Message -->
+        <div id="errorMessage" class="hidden bg-red-50 border-l-4 border-red-400 p-4 text-red-700 mb-4">
           Error loading rating data. Please try again.
         </div>
         
-        <div id="noDataMessage" class="alert alert-info d-none" role="alert">
+        <!-- No Data Message -->
+        <div id="noDataMessage" class="hidden bg-blue-50 border-l-4 border-blue-400 p-4 text-blue-700 mb-4">
           No rating data available.
         </div>
         
-        <div id="ratingTableContainer" class="d-none">
-          <div class="table-responsive">
-            <table class="table table-striped table-hover">
-              <thead>
+        <!-- Rating Table -->
+        <div id="ratingTableContainer" class="hidden">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
                 <tr>
-                  <th>Item ID</th>
-                  <th>Average Rating</th>
-                  <th>Total Ratings</th>
-                  <th>Rating Distribution</th>
-                  <th>Timestamps</th>
-                  <th>Actions</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item ID</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Average Rating</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Ratings</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rating Distribution</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamps</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody id="ratingTableBody">
+              <tbody id="ratingTableBody" class="bg-white divide-y divide-gray-200">
                 <!-- Rating data will be inserted here -->
               </tbody>
             </table>
@@ -212,84 +118,84 @@
       </div>
     </div>
     
-    <!-- Rating Details Modal -->
-    <div class="modal fade" id="ratingDetailsModal" tabindex="-1" aria-labelledby="ratingDetailsModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="ratingDetailsModalLabel">Rating Details</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div id="modalLoadingSpinner" class="text-center py-3">
-              <div class="spinner-border spinner-border-sm text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-              <p class="mt-2 text-muted small">Loading details...</p>
-            </div>
-            
-            <div id="modalErrorMessage" class="alert alert-danger d-none" role="alert">
-              Error loading rating details. Please try again.
-            </div>
-            
-            <div id="ratingDetailsContent" class="d-none">
-              <div class="row mb-4">
-                <div class="col-md-6">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h6 class="mb-0">Rating Summary</h6>
-                    </div>
-                    <div class="card-body">
-                      <div class="d-flex align-items-center mb-3">
-                        <div class="display-4 me-3 fw-bold text-primary" id="detailsAverageRating">0.0</div>
-                        <div class="stars-display" id="detailsStarsDisplay"></div>
-                      </div>
-                      <p class="mb-1">Total ratings: <span id="detailsTotalRatings">0</span></p>
-                      <p class="mb-0">Item ID: <span id="detailsItemId">-</span></p>
-                    </div>
-                  </div>
+    <!-- Rating Details Dialog -->
+    <div id="ratingDetailsDialog" class="fixed inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <!-- Background overlay -->
+        <div id="dialogBackdrop" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+        <!-- Dialog panel -->
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+            <div class="sm:flex sm:items-start">
+              <div class="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                  Rating Details
+                </h3>
+                
+                <!-- Modal Loading Spinner -->
+                <div id="modalLoadingSpinner" class="py-8 text-center">
+                  <svg class="animate-spin h-6 w-6 text-indigo-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <p class="mt-2 text-sm text-gray-500">Loading details...</p>
                 </div>
-                <div class="col-md-6">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h6 class="mb-0">Rating Distribution</h6>
+                
+                <!-- Modal Error Message -->
+                <div id="modalErrorMessage" class="hidden bg-red-50 border-l-4 border-red-400 p-4 text-red-700 my-4">
+                  Error loading rating details. Please try again.
+                </div>
+                
+                <!-- Rating Details Content -->
+                <div id="ratingDetailsContent" class="hidden mt-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <h4 class="font-medium text-gray-800 mb-3">Rating Summary</h4>
+                      <div class="flex items-center mb-3">
+                        <div class="text-4xl font-bold text-indigo-600 mr-3" id="detailsAverageRating">0.0</div>
+                        <div class="flex" id="detailsStarsDisplay"></div>
+                      </div>
+                      <p class="text-gray-700 mb-1">Total ratings: <span id="detailsTotalRatings" class="font-medium">0</span></p>
+                      <p class="text-gray-700 mb-0">Item ID: <span id="detailsItemId" class="font-medium text-gray-500 text-sm">-</span></p>
                     </div>
-                    <div class="card-body">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                      <h4 class="font-medium text-gray-800 mb-3">Rating Distribution</h4>
                       <div id="detailsRatingBars"></div>
                     </div>
                   </div>
-                </div>
-              </div>
-              
-              <!-- Timestamps Section -->
-              <div class="card mb-3">
-                <div class="card-header">
-                  <h6 class="mb-0">Timestamps</h6>
-                </div>
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <p class="mb-1"><strong>Created:</strong> <span id="detailsCreatedAt">-</span></p>
-                    </div>
-                    <div class="col-md-6">
-                      <p class="mb-1"><strong>Last Updated:</strong> <span id="detailsUpdatedAt">-</span></p>
+                  
+                  <!-- Timestamps Section -->
+                  <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 mb-4">
+                    <h4 class="font-medium text-gray-800 mb-3">Timestamps</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p class="text-gray-700"><strong>Created:</strong> <span id="detailsCreatedAt" class="text-gray-600">-</span></p>
+                      </div>
+                      <div>
+                        <p class="text-gray-700"><strong>Last Updated:</strong> <span id="detailsUpdatedAt" class="text-gray-600">-</span></p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+            <button type="button" id="closeDialogBtn" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+              Close
+            </button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- 引入评分组件 -->
+  <!-- The app will be mounted here by main.ts -->
+  
+  <!-- Import rating widget component -->
   <script type="module" src="/src/main.ts"></script>
+  
   <script>
     // API URL
     const API_BASE_URL = 'https://nodejs-serverless-function-express-opal-omega.vercel.app/api';
@@ -306,8 +212,10 @@
     const ratingTableBody = document.getElementById('ratingTableBody');
     const refreshBtn = document.getElementById('refreshBtn');
 
-    // Modal Elements
-    const ratingDetailsModal = document.getElementById('ratingDetailsModal');
+    // Dialog Elements
+    const ratingDetailsDialog = document.getElementById('ratingDetailsDialog');
+    const dialogBackdrop = document.getElementById('dialogBackdrop');
+    const closeDialogBtn = document.getElementById('closeDialogBtn');
     const modalLoadingSpinner = document.getElementById('modalLoadingSpinner');
     const modalErrorMessage = document.getElementById('modalErrorMessage');
     const ratingDetailsContent = document.getElementById('ratingDetailsContent');
@@ -319,27 +227,17 @@
     const detailsCreatedAt = document.getElementById('detailsCreatedAt');
     const detailsUpdatedAt = document.getElementById('detailsUpdatedAt');
 
-    // Bootstrap Modal Instance
-    let modal;
-
     // Initialize the dashboard
     document.addEventListener('DOMContentLoaded', () => {
-      // 检查 Bootstrap 是否已加载
-      if (typeof bootstrap === 'undefined') {
-        console.error('Bootstrap is not loaded. Make sure the Bootstrap script is included before this script.');
-        errorMessage.textContent = 'Error: Bootstrap library not loaded. Please refresh the page or contact support.';
-        errorMessage.classList.remove('d-none');
-        return;
-      }
-
-      // Initialize Bootstrap modal
-      modal = new bootstrap.Modal(ratingDetailsModal);
-      
       // Load initial data
       loadRatingData();
       
       // Set up event listeners
       refreshBtn.addEventListener('click', loadRatingData);
+      
+      // Dialog event listeners
+      closeDialogBtn.addEventListener('click', closeDialog);
+      dialogBackdrop.addEventListener('click', closeDialog);
     });
 
     // Format date for display
@@ -408,36 +306,34 @@
         const updatedAt = formatDate(item.updatedAt);
         
         row.innerHTML = `
-          <td>${item.itemId}</td>
-          <td>
-            <div class="d-flex align-items-center">
-              <span class="fw-bold me-2">${avgRating.toFixed(1)}</span>
-              <div class="stars-display">
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${item.itemId}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <span class="font-medium mr-2">${avgRating.toFixed(1)}</span>
+              <div class="flex">
                 ${generateStarsHTML(avgRating)}
               </div>
             </div>
           </td>
-          <td>${item.totalRatings}</td>
-          <td>
-            <div class="table-rating-bars">
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${item.totalRatings}</td>
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="w-32">
               ${generateTableRatingBarsHTML(item.ratingCounts)}
             </div>
           </td>
-          <td>
-            <div class="small text-muted">
-              <div>Created: ${createdAt}</div>
-              <div>Updated: ${updatedAt}</div>
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+            <div>
+              <div class="text-xs text-gray-500">Created: ${createdAt}</div>
+              <div class="text-xs text-gray-500">Updated: ${updatedAt}</div>
             </div>
           </td>
-          <td>
-            <div class="action-buttons">
-              <button class="btn btn-sm btn-outline-primary view-details-btn" data-item-id="${item.itemId}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                  <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
-                  <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
-                </svg>
-              </button>
-            </div>
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <button class="text-indigo-600 hover:text-indigo-900 view-details-btn" data-item-id="${item.itemId}">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
           </td>
         `;
         
@@ -454,18 +350,18 @@
       
       // Show the table
       hideLoading();
-      ratingTableContainer.classList.remove('d-none');
+      ratingTableContainer.classList.remove('hidden');
     }
 
-    // Open rating details modal
+    // Open rating details dialog
     async function openRatingDetails(itemId) {
-      // Show modal
-      modal.show();
+      // Show dialog
+      ratingDetailsDialog.classList.remove('hidden');
       
       // Show loading spinner
-      modalLoadingSpinner.classList.remove('d-none');
-      modalErrorMessage.classList.add('d-none');
-      ratingDetailsContent.classList.add('d-none');
+      modalLoadingSpinner.classList.remove('hidden');
+      modalErrorMessage.classList.add('hidden');
+      ratingDetailsContent.classList.add('hidden');
       
       try {
         // Fetch rating details for the specific item
@@ -481,12 +377,17 @@
         displayRatingDetails(data);
       } catch (error) {
         console.error('Error loading rating details:', error);
-        modalLoadingSpinner.classList.add('d-none');
-        modalErrorMessage.classList.remove('d-none');
+        modalLoadingSpinner.classList.add('hidden');
+        modalErrorMessage.classList.remove('hidden');
       }
     }
 
-    // Display rating details in the modal
+    // Close dialog
+    function closeDialog() {
+      ratingDetailsDialog.classList.add('hidden');
+    }
+
+    // Display rating details in the dialog
     function displayRatingDetails(data) {
       // Set item ID
       detailsItemId.textContent = data.itemId;
@@ -513,8 +414,8 @@
       detailsRatingBars.innerHTML = generateRatingBarsHTML(data.ratingCounts, data.totalRatings);
       
       // Hide loading spinner and show content
-      modalLoadingSpinner.classList.add('d-none');
-      ratingDetailsContent.classList.remove('d-none');
+      modalLoadingSpinner.classList.add('hidden');
+      ratingDetailsContent.classList.remove('hidden');
     }
 
     // Generate HTML for star rating display
@@ -539,10 +440,10 @@
         const percentage = maxCount > 0 ? (count / maxCount) * 100 : 0;
         
         barsHTML += `
-          <div class="table-rating-bar-container">
-            <span class="table-rating-label">${i}</span>
-            <div class="table-rating-bar-wrapper">
-              <div class="table-rating-bar" style="width: ${percentage}%"></div>
+          <div class="flex items-center text-xs mb-1">
+            <span class="w-4 text-gray-600">${i}</span>
+            <div class="flex-grow bg-gray-200 rounded-full h-1 mx-1">
+              <div class="bg-yellow-400 h-1 rounded-full" style="width: ${percentage}%"></div>
             </div>
           </div>
         `;
@@ -551,7 +452,7 @@
       return barsHTML;
     }
 
-    // Generate HTML for rating distribution bars in modal
+    // Generate HTML for rating distribution bars in dialog
     function generateRatingBarsHTML(ratingCounts, totalRatings) {
       let barsHTML = '';
       
@@ -560,12 +461,12 @@
         const percentage = totalRatings > 0 ? (count / totalRatings) * 100 : 0;
         
         barsHTML += `
-          <div class="rating-bar-container">
-            <span class="rating-label">${i}★</span>
-            <div class="rating-bar-wrapper">
-              <div class="rating-bar" style="width: ${percentage}%"></div>
+          <div class="flex items-center mb-2">
+            <span class="w-8 text-right mr-2 text-gray-700">${i}★</span>
+            <div class="flex-grow bg-gray-200 rounded-full h-2">
+              <div class="bg-yellow-400 h-2 rounded-full" style="width: ${percentage}%"></div>
             </div>
-            <span class="rating-count">${count}</span>
+            <span class="w-8 text-right ml-2 text-gray-500 text-sm">${count}</span>
           </div>
         `;
       }
@@ -589,33 +490,33 @@
 
     // Show loading state
     function showLoading() {
-      loadingSpinner.classList.remove('d-none');
-      errorMessage.classList.add('d-none');
-      noDataMessage.classList.add('d-none');
-      ratingTableContainer.classList.add('d-none');
+      loadingSpinner.classList.remove('hidden');
+      errorMessage.classList.add('hidden');
+      noDataMessage.classList.add('hidden');
+      ratingTableContainer.classList.add('hidden');
     }
 
     // Hide loading state
     function hideLoading() {
-      loadingSpinner.classList.add('d-none');
+      loadingSpinner.classList.add('hidden');
     }
 
     // Show error message
     function showError() {
       hideLoading();
-      errorMessage.classList.remove('d-none');
+      errorMessage.classList.remove('hidden');
     }
 
     // Show no data message
     function showNoData() {
       hideLoading();
-      noDataMessage.classList.remove('d-none');
+      noDataMessage.classList.remove('hidden');
     }
 
-    // 添加事件监听器，监听评分提交事件
+    // Add event listener for rating submission
     document.querySelector('rating-widget').addEventListener('rating-submitted', (event) => {
       console.log('Rating submitted event:', event.detail);
-      // 可以在这里添加额外的处理逻辑，例如刷新评分数据
+      // Refresh rating data after submission
       setTimeout(() => {
         loadRatingData();
       }, 1000);
@@ -623,3 +524,4 @@
   </script>
 </body>
 </html>
+

@@ -1,10 +1,14 @@
 import './app.css'
 import './lib/rating-widget'
+import App from './App.svelte'
 
-// App component is no longer needed in development environment
-// import App from './App.svelte'
-// const app = mount(App, {
-//   target: document.getElementById('app')!,
-// })
+// Mount the App component
+const app = document.createElement('div');
+app.id = 'app';
+document.body.appendChild(app);
 
-// export default app
+const appInstance = new App({
+  target: document.getElementById('app')!,
+});
+
+export default appInstance;
