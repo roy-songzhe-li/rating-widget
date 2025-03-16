@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run build:widget && vite build && node deploy.js",
     "build:widget": "cross-env BUILD_TARGET=widget vite build",
     "preview": "vite preview"
   },
