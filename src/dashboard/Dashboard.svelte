@@ -476,7 +476,8 @@
 
   <!-- Fixed Rating Widget in bottom right corner -->
   <div class="fixed bottom-6 right-6 z-50">
-    <rating-widget></rating-widget>
+    <!-- <rating-widget></rating-widget> -->
+    <rating-widget test="true"></rating-widget>
   </div>
 </div>
 

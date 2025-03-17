@@ -14,76 +14,102 @@
   let submitSuccess = false;
   let submitError = false;
   let errorMessage = '';
+  let testMode = false; // 添加测试模式状态变量
+  
+  // 导出属性，允许从外部设置测试模式
+  export let test = '';
   
   // API endpoint - always use absolute URL for cross-origin compatibility
   const API_URL = 'https://nodejs-serverless-function-express-opal-omega.vercel.app/api';
   
+  // 生成随机用户ID的函数
+  function generateRandomUserId() {
+    return 'user-' + Math.random().toString(36).substring(2, 15);
+  }
+  
   onMount(() => {
     try {
-      // Generate a random user ID
-      userId = 'user-' + Math.random().toString(36).substring(2, 15);
+      // 检查是否设置了测试模式
+      testMode = test === 'true';
       
-      // Get the item ID from the current URL
+      // 记录测试模式状态
+      if (testMode) {
+        console.log('Rating Widget initialized in TEST MODE');
+      }
+      
+      // 生成一个随机用户ID
+      userId = generateRandomUserId();
+      
+      // 获取当前URL的主机名作为itemId
       itemId = window.location.hostname;
       
-      // For local development, use a test itemId
+      // 本地开发时使用测试itemId
       if (itemId === 'localhost') {
         itemId = 'localhost-test';
       }
       
-      // Check if user has already rated using localStorage
-      checkLocalRating();
+      // 只有在非测试模式下才检查本地存储的评分
+      if (!testMode) {
+        checkLocalRating();
+      }
       
-      // Log successful initialization
+      // 记录初始化成功
       console.log('Rating Widget initialized for:', itemId);
     } catch (error) {
       console.error('Error initializing Rating Widget:', error);
     }
   });
   
-  // Check if user has already rated this item using localStorage
+  // 检查用户是否已经对此项目进行了评分（使用localStorage）
   function checkLocalRating() {
     try {
-      // Create a unique key for this item and user
+      // 为此项目和用户创建唯一键
       const storageKey = `rating_${itemId}`;
       
-      // Try to get the rating from localStorage
+      // 尝试从localStorage获取评分
       const storedRating = localStorage.getItem(storageKey);
       
       if (storedRating) {
-        // Parse the stored data
+        // 解析存储的数据
         const ratingData = JSON.parse(storedRating);
         rating = ratingData.rating;
         hasRated = true;
       }
     } catch (error) {
       console.error('Error checking local rating:', error);
-      // Continue without showing error to user
+      // 继续而不向用户显示错误
     }
   }
   
-  // Handle star hover
+  // 处理星星悬停
   function handleStarHover(value) {
     hoverRating = value;
   }
   
-  // Handle star leave
+  // 处理星星离开
   function handleStarLeave() {
     hoverRating = 0;
   }
   
-  // Handle star click
+  // 处理星星点击
   function handleStarClick(value) {
     rating = value;
     submitRating();
   }
   
-  // Toggle widget visibility
+  // 切换小部件可见性
   function toggleWidget() {
     isOpen = !isOpen;
+    
+    // 在测试模式下，每次打开小部件时生成新的随机用户ID
+    if (testMode && isOpen) {
+      userId = generateRandomUserId();
+      hasRated = false; // 重置已评分状态
+      console.log('Test mode: Generated new userId:', userId);
+    }
   }
   
-  // Submit rating to API
+  // 提交评分到API
   async function submitRating() {
     if (rating === 0) return;
     
@@ -92,20 +118,24 @@
     submitError = false;
     
     try {
-      // Save rating to localStorage first (if available)
-      try {
-        const storageKey = `rating_${itemId}`;
-        const ratingData = {
-          rating,
-          userId,
-          timestamp: new Date().toISOString()
-        };
-        localStorage.setItem(storageKey, JSON.stringify(ratingData));
-      } catch (storageError) {
-        console.warn('Could not save to localStorage:', storageError);
+      // 只有在非测试模式下才保存到localStorage
+      if (!testMode) {
+        try {
+          const storageKey = `rating_${itemId}`;
+          const ratingData = {
+            rating,
+            userId,
+            timestamp: new Date().toISOString()
+          };
+          localStorage.setItem(storageKey, JSON.stringify(ratingData));
+        } catch (storageError) {
+          console.warn('Could not save to localStorage:', storageError);
+        }
+      } else {
+        console.log('Test mode: Skipping localStorage save');
       }
       
-      // Then submit to API
+      // 然后提交到API
       const response = await fetch(`${API_URL}/saveRating`, {
         method: 'POST',
         mode: 'cors',
@@ -118,7 +148,8 @@
         body: JSON.stringify({
           itemId,
           rating,
-          userId
+          userId,
+          testMode // 将测试模式状态传递给API
         }),
       });
       
@@ -129,7 +160,7 @@
           isOpen = false;
         }, 2000);
       } else {
-        // Try to parse error response
+        // 尝试解析错误响应
         let errorData;
         try {
           errorData = await response.json();
@@ -142,15 +173,15 @@
         console.error('API error:', errorMessage);
       }
     } catch (error) {
-      // Even if API call fails, we've tried to save to localStorage
-      // so we can still show success to the user
+      // 即使API调用失败，我们也尝试保存到localStorage
+      // 所以我们仍然可以向用户显示成功
       hasRated = true;
       submitSuccess = true;
       setTimeout(() => {
         isOpen = false;
       }, 2000);
       
-      // Log the error but don't show to user
+      // 记录错误但不向用户显示
       console.error('Error submitting rating to API:', error);
     } finally {
       isSubmitting = false;
@@ -164,18 +195,19 @@
     class="rating-toggle-button" 
     on:click={toggleWidget}
     aria-label="Rate this website"
+    class:test-mode={testMode}
   >
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
     </svg>
-    <span>Rate</span>
+    <span>Rate{testMode ? ' (Test)' : ''}</span>
   </button>
   
   <!-- Rating widget -->
   {#if isOpen}
-    <div class="rating-panel" class:rating-panel-open={isOpen}>
+    <div class="rating-panel" class:rating-panel-open={isOpen} class:test-mode={testMode}>
       <div class="rating-header">
-        <h3>Rate this website</h3>
+        <h3>Rate this website{testMode ? ' (Test Mode)' : ''}</h3>
         <button class="close-button" on:click={toggleWidget} aria-label="Close rating panel">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -185,7 +217,7 @@
       </div>
       
       <div class="rating-content">
-        {#if !hasRated || submitSuccess}
+        {#if !hasRated || submitSuccess || testMode}
           <div class="stars-container">
             {#each Array(5) as _, i}
               <button 
@@ -229,6 +261,12 @@
                 <line x1="12" y1="16" x2="12.01" y2="16"></line>
               </svg>
               <span>{errorMessage}</span>
+            </div>
+          {/if}
+          
+          {#if testMode}
+            <div class="test-mode-indicator">
+              <p>Test Mode Active - UserID: {userId.substring(0, 8)}...</p>
             </div>
           {/if}
         {:else}
@@ -285,6 +323,15 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
   
+  /* 测试模式按钮样式 */
+  .rating-toggle-button.test-mode {
+    background-color: #FF9500;
+  }
+  
+  .rating-toggle-button.test-mode:hover {
+    background-color: #F08300;
+  }
+  
   .rating-panel {
     position: absolute;
     bottom: 60px;
@@ -298,6 +345,11 @@
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  /* 测试模式面板样式 */
+  .rating-panel.test-mode {
+    border: 2px solid #FF9500;
   }
   
   .rating-panel-open {
@@ -418,5 +470,16 @@
     gap: 4px;
     margin-top: 8px;
     color: #FFCC00;
+  }
+  
+  /* 测试模式指示器样式 */
+  .test-mode-indicator {
+    margin-top: 16px;
+    padding: 8px;
+    background-color: rgba(255, 149, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
+    color: #FF9500;
   }
 </style> 
