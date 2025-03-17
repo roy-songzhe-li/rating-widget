@@ -156,6 +156,24 @@
       minute: '2-digit'
     });
   }
+  
+  // Handle code copy
+  async function handleCopyCode() {
+    try {
+      await navigator.clipboard.writeText('<script src="https://roy-li.space/rating-widget.js"><\/script>\n<rating-widget></rating-widget>');
+      const tooltip = document.getElementById('copy-tooltip');
+      tooltip.textContent = 'Copied!';
+      tooltip.classList.remove('opacity-0');
+      setTimeout(() => {
+        tooltip.classList.add('opacity-0');
+        setTimeout(() => {
+          tooltip.textContent = 'Click to copy';
+        }, 300);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  }
 </script>
 
 <!-- Tailwind CSS CDN -->
@@ -419,28 +437,25 @@
           </div>
           <p class="text-sm text-gray-500 mb-3 ml-8">Add this code to your website:</p>
           <div class="relative group">
-            <pre class="bg-gray-50/60 backdrop-blur-sm rounded-xl p-4 text-sm font-mono text-gray-600 
-                     overflow-x-auto border border-gray-200/20 cursor-pointer
-                     transition-all duration-300 hover:shadow-md hover:border-blue-200/30"
-                 on:click={async () => {
-                   try {
-                     await navigator.clipboard.writeText('<script src="https://roy-li.space/rating-widget.js"><\/script>\n<rating-widget></rating-widget>');
-                     const tooltip = document.getElementById('copy-tooltip');
-                     tooltip.textContent = 'Copied!';
-                     tooltip.classList.remove('opacity-0');
-                     setTimeout(() => {
-                       tooltip.classList.add('opacity-0');
-                     }, 2000);
-                   } catch (err) {
-                     console.error('Failed to copy:', err);
-                   }
-                 }}><code>&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
+            <button type="button"
+                    class="block w-full text-left"
+                    on:click={() => handleCopyCode()}
+                    on:keydown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        handleCopyCode();
+                      }
+                    }}
+                    aria-label="Click to copy installation code">
+              <pre class="bg-gray-50/60 backdrop-blur-sm rounded-xl p-4 text-sm font-mono text-gray-600 
+                       overflow-x-auto border border-gray-200/20
+                       transition-all duration-300 hover:shadow-md hover:border-blue-200/30"><code>&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
 &lt;rating-widget&gt;&lt;/rating-widget&gt;</code></pre>
+            </button>
             
             <!-- Copy icon -->
             <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <svg class="w-5 h-5 text-gray-400 hover:text-blue-500 transition-colors duration-300" 
-                   fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="w-5 h-5 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                       d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
               </svg>
