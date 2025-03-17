@@ -193,10 +193,10 @@
                              transition-all duration-300 ease-out
                              hover:border-gray-300/80 hover:bg-white/50 focus:outline-none focus:ring-1 focus:ring-gray-200/50
                              group-hover:shadow-sm pr-10">
-                {#each sortOptions as option}
-                  <option value={option.value}>{option.label}</option>
-                {/each}
-              </select>
+          {#each sortOptions as option}
+            <option value={option.value}>{option.label}</option>
+          {/each}
+        </select>
               <!-- Sort icon with animation (fixed position) -->
               <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2">
                 <svg class="w-4 h-4 text-gray-400 transform transition-transform duration-300 
@@ -205,7 +205,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
               </div>
-            </div>
+      </div>
             <!-- Enhanced refresh button -->
             <button class="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm text-gray-600 
                          border border-gray-200/80 rounded-xl px-4 py-2 text-sm font-medium
@@ -217,27 +217,29 @@
                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-              </svg>
-              Refresh
-            </button>
+        </svg>
+        Refresh
+      </button>
           </div>
-        </div>
-      </header>
-
+    </div>
+  </header>
+  
       <!-- Enhanced content container -->
       <div class="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-white/20">
-        {#if isLoading}
-          <!-- Enhanced loading state -->
+    {#if isLoading}
+          <!-- Modern loading state with bouncing dots -->
           <div class="p-12 text-center">
-            <div class="inline-flex flex-col items-center gap-3">
-              <div class="relative">
-                <div class="w-12 h-12 rounded-full border-2 border-blue-500/20 animate-pulse"></div>
-                <div class="absolute inset-0 w-12 h-12 rounded-full border-t-2 border-blue-500 animate-spin"></div>
+            <div class="inline-flex flex-col items-center gap-4">
+              <div class="flex items-center gap-2">
+                <!-- Bouncing dots -->
+                <div class="w-3 h-3 rounded-full bg-blue-500 animate-bounce-delay-1"></div>
+                <div class="w-3 h-3 rounded-full bg-blue-400 animate-bounce-delay-2"></div>
+                <div class="w-3 h-3 rounded-full bg-blue-300 animate-bounce-delay-3"></div>
               </div>
-              <p class="text-gray-600 animate-pulse">Loading ratings...</p>
+              <p class="text-gray-600">Loading ratings...</p>
             </div>
           </div>
-        {:else if error}
+    {:else if error}
           <!-- Enhanced error state -->
           <div class="p-12 text-center">
             <div class="inline-flex flex-col items-center gap-4">
@@ -347,7 +349,7 @@
                       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                      </svg>
+        </svg>
                       <span>Updated: {formatDate(item.updatedAt)}</span>
                     </div>
                   </div>
@@ -398,7 +400,7 @@
             <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                     d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-            </svg>
+        </svg>
             <h3 class="text-base font-medium text-gray-900">Installation</h3>
           </div>
           <p class="text-sm text-gray-500 mb-3 ml-8">Add this code to your website:</p>
@@ -429,12 +431,14 @@
                 animate-scale-up focus:outline-none focus:ring-1 focus:ring-gray-200/50">
       {#if isPopoverLoading}
         <div class="p-12 text-center">
-          <div class="inline-flex flex-col items-center gap-3">
-            <div class="relative">
-              <div class="w-12 h-12 rounded-full border-2 border-blue-500/20 animate-pulse"></div>
-              <div class="absolute inset-0 w-12 h-12 rounded-full border-t-2 border-blue-500 animate-spin"></div>
+          <div class="inline-flex flex-col items-center gap-4">
+            <div class="flex items-center gap-2">
+              <!-- Bouncing dots -->
+              <div class="w-3 h-3 rounded-full bg-blue-500 animate-bounce-delay-1"></div>
+              <div class="w-3 h-3 rounded-full bg-blue-400 animate-bounce-delay-2"></div>
+              <div class="w-3 h-3 rounded-full bg-blue-300 animate-bounce-delay-3"></div>
             </div>
-            <p class="text-gray-600 animate-pulse">Loading details...</p>
+            <p class="text-gray-600">Loading details...</p>
           </div>
         </div>
       {:else if popoverError}
@@ -490,10 +494,10 @@
                       d="M6 18L18 6M6 6l12 12"/>
               </svg>
             </button>
-          </div>
-          
+            </div>
+            
           <div class="space-y-2">
-            {#each [5, 4, 3, 2, 1] as starValue}
+              {#each [5, 4, 3, 2, 1] as starValue}
               <div class="flex items-center gap-3 group">
                 <span class="w-4 text-right font-medium text-gray-600 transition-colors duration-300
                            group-hover:text-blue-500">{starValue}</span>
@@ -510,10 +514,10 @@
                            group-hover:text-blue-500">
                   {detailedRating.ratingCounts[starValue] || 0} ratings
                 </span>
-              </div>
-            {/each}
-          </div>
-          
+                </div>
+              {/each}
+            </div>
+            
           <div class="pt-4 border-t border-gray-200/50">
             <div class="flex flex-col gap-2 text-sm text-gray-500">
               <div class="flex items-center gap-2">
@@ -522,7 +526,7 @@
                         d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                 </svg>
                 <span>Created: {formatDate(detailedRating.createdAt)}</span>
-              </div>
+                </div>
               <div class="flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -532,8 +536,8 @@
               </div>
             </div>
           </div>
-        </div>
-      {/if}
+      </div>
+    {/if}
     </div>
   </div>
 {/if}
@@ -577,6 +581,18 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
   }
+
+  /* Bouncing dots animations */
+  @keyframes bounce-delay {
+    0%, 80%, 100% { 
+      transform: scale(0.6);
+      opacity: 0.6;
+    }
+    40% { 
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
   
   /* Animation classes */
   .animate-fade-in {
@@ -593,5 +609,18 @@
   
   .animate-float {
     animation: float 3s ease-in-out infinite;
+  }
+
+  /* Bouncing dots classes */
+  .animate-bounce-delay-1 {
+    animation: bounce-delay 1.4s infinite ease-in-out;
+  }
+  
+  .animate-bounce-delay-2 {
+    animation: bounce-delay 1.4s infinite ease-in-out 0.2s;
+  }
+  
+  .animate-bounce-delay-3 {
+    animation: bounce-delay 1.4s infinite ease-in-out 0.4s;
   }
 </style> 
