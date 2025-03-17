@@ -238,7 +238,7 @@
               </div>
               <p class="text-gray-600">Loading ratings...</p>
             </div>
-          </div>
+      </div>
     {:else if error}
           <!-- Enhanced error state -->
           <div class="p-12 text-center">
@@ -362,6 +362,20 @@
 
       <!-- Enhanced test section with Rating Widget reference -->
       <div class="bg-white/80 backdrop-blur-md rounded-2xl p-6 shadow-sm border border-white/20 space-y-6">
+        <!-- Introduction -->
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <h2 class="text-base font-medium text-gray-900">Introduction</h2>
+          </div>
+          <p class="text-sm text-gray-500 ml-8 leading-relaxed">
+            This is the dashboard for visualizing and managing Rating Widget data. View all collected ratings, sort them by various metrics (rating, date, count), and analyze detailed statistics. Simply add the installation script to your HTML to start collecting ratings instantly.
+          </p>
+        </div>
+
         <!-- Source Code Links -->
         <div>
           <div class="flex items-center gap-3 mb-3">
@@ -400,14 +414,46 @@
             <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                     d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-        </svg>
+            </svg>
             <h3 class="text-base font-medium text-gray-900">Installation</h3>
           </div>
           <p class="text-sm text-gray-500 mb-3 ml-8">Add this code to your website:</p>
-          <pre class="bg-gray-50/60 backdrop-blur-sm rounded-xl p-4 text-sm font-mono text-gray-600 
-                     overflow-x-auto border border-gray-200/20
-                     transition-all duration-300 hover:shadow-md group"><code>&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
+          <div class="relative group">
+            <pre class="bg-gray-50/60 backdrop-blur-sm rounded-xl p-4 text-sm font-mono text-gray-600 
+                     overflow-x-auto border border-gray-200/20 cursor-pointer
+                     transition-all duration-300 hover:shadow-md hover:border-blue-200/30"
+                 on:click={async () => {
+                   try {
+                     await navigator.clipboard.writeText('<script src="https://roy-li.space/rating-widget.js"><\/script>\n<rating-widget></rating-widget>');
+                     const tooltip = document.getElementById('copy-tooltip');
+                     tooltip.textContent = 'Copied!';
+                     tooltip.classList.remove('opacity-0');
+                     setTimeout(() => {
+                       tooltip.classList.add('opacity-0');
+                     }, 2000);
+                   } catch (err) {
+                     console.error('Failed to copy:', err);
+                   }
+                 }}><code>&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
 &lt;rating-widget&gt;&lt;/rating-widget&gt;</code></pre>
+            
+            <!-- Copy icon -->
+            <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <svg class="w-5 h-5 text-gray-400 hover:text-blue-500 transition-colors duration-300" 
+                   fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            
+            <!-- Copy tooltip -->
+            <div id="copy-tooltip" 
+                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 px-3 py-1 
+                        bg-gray-900 text-white text-sm rounded-lg opacity-0
+                        transition-opacity duration-300">
+              Click to copy
+            </div>
+          </div>
         </div>
       </div>
     </div>
