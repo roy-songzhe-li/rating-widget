@@ -10,6 +10,10 @@
   let isPopoverLoading = false;
   let popoverError = null;
   let detailedRating = null;
+  let isTestMode = true; // Default value, will be updated from localStorage in onMount
+  
+  // Storage key for test mode
+  const TEST_MODE_STORAGE_KEY = 'rating_widget_test_mode';
   
   // Sort options
   const sortOptions = [
@@ -29,6 +33,17 @@
     : 'https://nodejs-serverless-function-express-opal-omega.vercel.app';
   
   onMount(async () => {
+    // Load test mode state from localStorage
+    try {
+      const savedTestMode = localStorage.getItem(TEST_MODE_STORAGE_KEY);
+      if (savedTestMode !== null) {
+        isTestMode = savedTestMode === 'true';
+        console.log(`Loaded test mode from localStorage: ${isTestMode}`);
+      }
+    } catch (err) {
+      console.warn('Could not load test mode from localStorage:', err);
+    }
+    
     await fetchAllRatings();
   });
   
@@ -172,6 +187,42 @@
       }, 2000);
     } catch (err) {
       console.error('Failed to copy:', err);
+    }
+  }
+  
+  // Handle test mode code copy
+  async function handleCopyTestModeCode() {
+    try {
+      const code = isTestMode 
+        ? '<script src="https://roy-li.space/rating-widget.js"><\/script>\n<rating-widget test="true"></rating-widget>'
+        : '<script src="https://roy-li.space/rating-widget.js"><\/script>\n<rating-widget></rating-widget>';
+      
+      await navigator.clipboard.writeText(code);
+      const tooltip = document.getElementById('test-mode-copy-tooltip');
+      tooltip.textContent = 'Copied!';
+      tooltip.classList.remove('opacity-0');
+      setTimeout(() => {
+        tooltip.classList.add('opacity-0');
+        setTimeout(() => {
+          tooltip.textContent = 'Click to copy';
+        }, 300);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy test mode code:', err);
+    }
+  }
+  
+  // Toggle test mode for the Rating Widget
+  function toggleTestMode() {
+    isTestMode = !isTestMode;
+    console.log(`Test mode ${isTestMode ? 'enabled' : 'disabled'}`);
+    
+    // Save test mode state to localStorage
+    try {
+      localStorage.setItem(TEST_MODE_STORAGE_KEY, isTestMode.toString());
+      console.log('Saved test mode to localStorage');
+    } catch (err) {
+      console.warn('Could not save test mode to localStorage:', err);
     }
   }
 </script>
@@ -435,38 +486,148 @@
             </svg>
             <h3 class="text-base font-medium text-gray-900">Installation</h3>
           </div>
-          <p class="text-sm text-gray-500 mb-3 ml-8">Add this code to your website:</p>
-          <div class="relative group">
-            <button type="button"
-                    class="block w-full text-left"
-                    on:click={() => handleCopyCode()}
-                    on:keydown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        handleCopyCode();
-                      }
-                    }}
-                    aria-label="Click to copy installation code">
-              <pre class="bg-gray-50/60 backdrop-blur-sm rounded-xl p-4 text-sm font-mono text-gray-600 
-                       overflow-x-auto border border-gray-200/20
-                       transition-all duration-300 hover:shadow-md hover:border-blue-200/30"><code>&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
+          <div class="space-y-3">
+            <p class="text-sm text-gray-500 mb-3 ml-8">Add this code to your website:</p>
+            <div class="relative group ml-8">
+              <button type="button"
+                      class="block w-full text-left"
+                      on:click={() => handleCopyCode()}
+                      on:keydown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handleCopyCode();
+                        }
+                      }}
+                      aria-label="Click to copy installation code">
+                <pre class="bg-gray-50/60 backdrop-blur-sm rounded-xl p-4 text-sm font-mono text-gray-600 
+                         overflow-x-auto border border-gray-200/20
+                         transition-all duration-300 hover:shadow-md hover:border-blue-200/30"><code>&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
 &lt;rating-widget&gt;&lt;/rating-widget&gt;</code></pre>
-            </button>
+              </button>
+              
+              <!-- Copy icon -->
+              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <svg class="w-5 h-5 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                        d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              
+              <!-- Copy tooltip -->
+              <div id="copy-tooltip" 
+                   class="absolute -top-10 left-1/2 transform -translate-x-1/2 px-3 py-1 
+                          bg-gray-900 text-white text-sm rounded-lg opacity-0
+                          transition-opacity duration-300">
+                Click to copy
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Test Mode Toggle Section -->
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <svg class="w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                    d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+            </svg>
+            <h3 class="text-base font-medium text-gray-900">Test Mode</h3>
+          </div>
+          
+          <div class="space-y-3">
+            <p class="text-sm text-gray-500 mb-3 ml-8">
+              Test Mode allows you to test the Rating Widget without affecting your actual ratings data. 
+              When enabled, the widget will generate a new random user ID each time it's opened and will not save ratings to localStorage.
+            </p>
             
-            <!-- Copy icon -->
-            <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <svg class="w-5 h-5 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-              </svg>
+            <!-- Toggle Switch -->
+            <div class="flex items-center justify-between ml-8">
+              <label for="test-mode-toggle" class="text-sm font-medium text-gray-700 cursor-pointer">
+                {isTestMode ? 'Test Mode Enabled' : 'Test Mode Disabled'}
+              </label>
+              <button 
+                id="test-mode-toggle"
+                class="relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white focus:ring-blue-500/40"
+                class:bg-blue-500={isTestMode}
+                class:bg-gray-300={!isTestMode}
+                on:click={toggleTestMode}
+                aria-pressed={isTestMode}
+                aria-label="Toggle test mode"
+              >
+                <span class="sr-only">{isTestMode ? 'Disable' : 'Enable'} test mode</span>
+                <span 
+                  class="inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ease-in-out"
+                  style="transform: translateX({isTestMode ? '28px' : '4px'});"
+                ></span>
+              </button>
             </div>
             
-            <!-- Copy tooltip -->
-            <div id="copy-tooltip" 
-                 class="absolute -top-10 left-1/2 transform -translate-x-1/2 px-3 py-1 
-                        bg-gray-900 text-white text-sm rounded-lg opacity-0
-                        transition-opacity duration-300">
-              Click to copy
+            <!-- Test Mode Status Indicator -->
+            <div class="mt-3 p-3 rounded-lg text-sm ml-8" 
+                 class:bg-blue-50={isTestMode} 
+                 class:text-blue-700={isTestMode}
+                 class:bg-gray-50={!isTestMode}
+                 class:text-gray-700={!isTestMode}>
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        d={isTestMode 
+                          ? "M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+                          : "M5 13l4 4L19 7"}/>
+                </svg>
+                <span>
+                  {#if isTestMode}
+                    The Rating Widget below is in Test Mode. Your ratings will not be saved to localStorage.
+                  {:else}
+                    The Rating Widget below is in Normal Mode. Your ratings will be saved to localStorage.
+                  {/if}
+                </span>
+              </div>
+            </div>
+            
+            <!-- Example Code -->
+            <div class="mt-4 ml-8">
+              <p class="text-sm text-gray-500 mb-2">
+                {#if isTestMode}
+                  To enable Test Mode in your own implementation, add the <code class="px-1.5 py-0.5 bg-gray-100 rounded text-blue-600 font-mono">test="true"</code> attribute:
+                {:else}
+                  Standard implementation without Test Mode:
+                {/if}
+              </p>
+              <div class="relative group">
+                <button type="button"
+                        class="block w-full text-left"
+                        on:click={handleCopyTestModeCode}
+                        on:keydown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleCopyTestModeCode();
+                          }
+                        }}
+                        aria-label="Click to copy code">
+                  <pre class="bg-gray-50/60 backdrop-blur-sm rounded-xl p-3 text-sm font-mono text-gray-600 
+                           overflow-x-auto border border-gray-200/20
+                           transition-all duration-300 hover:shadow-md hover:border-blue-200/30"><code>{#if isTestMode}&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
+&lt;rating-widget test="true"&gt;&lt;/rating-widget&gt;{:else}&lt;script src="https://roy-li.space/rating-widget.js"&gt;&lt;/script&gt;
+&lt;rating-widget&gt;&lt;/rating-widget&gt;{/if}</code></pre>
+                </button>
+                
+                <!-- Copy icon -->
+                <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <svg class="w-5 h-5 text-gray-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                  </svg>
+                </div>
+                
+                <!-- Copy tooltip -->
+                <div id="test-mode-copy-tooltip" 
+                     class="absolute -top-10 left-1/2 transform -translate-x-1/2 px-3 py-1 
+                            bg-gray-900 text-white text-sm rounded-lg opacity-0
+                            transition-opacity duration-300">
+                  Click to copy
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -476,8 +637,7 @@
 
   <!-- Fixed Rating Widget in bottom right corner -->
   <div class="fixed bottom-6 right-6 z-50">
-    <!-- <rating-widget></rating-widget> -->
-    <rating-widget test="true"></rating-widget>
+    <rating-widget test={isTestMode ? "true" : ""}></rating-widget>
   </div>
 </div>
 
