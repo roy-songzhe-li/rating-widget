@@ -254,16 +254,17 @@
   {#if isMinimized}
     <div 
       class="minimized-star-wrapper"
-      transition:scale={{ duration: 300, start: 0.5, opacity: 0.5, easing: elasticOut }}
+      transition:scale={{ duration: 150, start: 0.5, opacity: 0.5, easing: elasticOut }}
     >
       <button 
         class="minimized-star-button" 
         on:click={toggleMinimized}
         aria-label="Open rating panel"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pulse-star">
-          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-        </svg>
+        <picture>
+          <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.webp" type="image/webp">
+          <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f929/512.gif" alt="🤩" width="48" height="48">
+        </picture>
       </button>
     </div>
   {:else}
@@ -386,7 +387,13 @@
                 </svg>
               {/each}
             </div>
-            <p class="rated-message">Thanks for rating!</p>
+            <p class="rated-message">
+              Thanks for rating!
+              <picture class="confetti-emoji">
+                <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.webp" type="image/webp">
+                <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/1f389/512.gif" alt="🎉" width="24" height="24">
+              </picture>
+            </p>
           </div>
         {/if}
       </div>
@@ -582,38 +589,39 @@
   .minimized-star-button {
     background: transparent;
     border: none;
-    color: #FFCC00;
     cursor: pointer;
-    padding: 8px;
+    padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.3));
   }
   
   .minimized-star-button:hover {
     transform: scale(1.1);
-    filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.4));
   }
-  
-  /* Softer animation for the minimized star */
-  .pulse-star {
+
+  .minimized-star-button picture {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .minimized-star-button img {
+    width: 48px;
+    height: 48px;
     animation: pulse-minimized 3s infinite;
   }
-  
+
   @keyframes pulse-minimized {
     0% {
-      transform: scale(1);
-      filter: drop-shadow(0 0 4px rgba(255, 204, 0, 0.2));
+        transform: scale(1);
     }
     50% {
-      transform: scale(1.08);
-      filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.3));
+        transform: scale(1.08);
     }
     100% {
-      transform: scale(1);
-      filter: drop-shadow(0 0 4px rgba(255, 204, 0, 0.2));
+        transform: scale(1);
     }
   }
   
@@ -831,6 +839,10 @@
     font-weight: 600;
     color: #555;
     letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
   
   /* Fix for minimized star position */
@@ -879,5 +891,47 @@
   
   .rated-message {
     font-size: 14px;
+  }
+
+  /* Add styles for the confetti emoji */
+  .confetti-emoji {
+    display: inline-flex;
+    align-items: center;
+    animation: confetti-pop 0.5s ease-out forwards, confetti-shake 2.5s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  @keyframes confetti-pop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+  }
+
+  @keyframes confetti-shake {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-10deg);
+    }
+    75% {
+        transform: rotate(10deg);
+    }
+  }
+
+  /* Mobile adjustments for the emoji */
+  @media (max-width: 480px) {
+    .confetti-emoji img {
+        width: 20px;
+        height: 20px;
+    }
   }
 </style>
