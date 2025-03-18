@@ -18,4 +18,4 @@ function addExternalCSS(href) {
 addExternalCSS('https://cdn.jsdelivr.net/npm/skeleton-elements@4.0.1/css/skeleton-elements.css');
 
 // Initialization complete
-console.log('Rating Widget loaded successfully! v1.0.0'); 
+console.log('Rating Widget loaded successfully! v1.0.1'); 
