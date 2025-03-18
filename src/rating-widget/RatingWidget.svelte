@@ -782,28 +782,31 @@
   .already-rated {
     text-align: center;
     color: #333;
-    padding: 12px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 14px;
+    transform: scale(1.06);
+    transition: all 0.3s ease;
   }
   
   .rating-value {
     display: flex;
     align-items: baseline;
-    gap: 2px;
+    gap: 5px;
   }
   
   .rating-number {
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 36px;
+    font-weight: 700;
     color: #FFCC00;
     line-height: 1;
+    text-shadow: 0 2px 4px rgba(255, 204, 0, 0.2);
   }
   
   .rating-max {
-    font-size: 14px;
+    font-size: 20px;
     color: #999;
     font-weight: 500;
   }
@@ -811,23 +814,23 @@
   .stars-display {
     display: flex;
     justify-content: center;
-    gap: 4px;
+    gap: 7px;
     color: #FFCC00;
-    margin-top: -2px;
+    margin: 3px 0;
   }
   
   .rated-star {
-    filter: drop-shadow(0 0 4px rgba(255, 204, 0, 0.2));
-    width: 18px;
-    height: 18px;
+    filter: drop-shadow(0 0 4px rgba(255, 204, 0, 0.3));
+    width: 26px;
+    height: 26px;
   }
   
   .rated-message {
     margin: 0;
-    font-size: 13px;
-    font-weight: 500;
-    color: #666;
-    opacity: 0.9;
+    font-size: 15px;
+    font-weight: 600;
+    color: #555;
+    letter-spacing: -0.01em;
   }
   
   /* Fix for minimized star position */
@@ -852,5 +855,29 @@
       width: 24px;
       height: 24px;
     }
+  }
+  
+  /* Mobile adjustments for already rated view */
+  .already-rated {
+    padding: 14px;
+    gap: 10px;
+    transform: scale(1.04);
+  }
+  
+  .rating-number {
+    font-size: 30px;
+  }
+  
+  .rating-max {
+    font-size: 17px;
+  }
+  
+  .rated-star {
+    width: 22px;
+    height: 22px;
+  }
+  
+  .rated-message {
+    font-size: 14px;
   }
 </style>
