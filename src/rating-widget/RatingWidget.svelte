@@ -318,14 +318,24 @@
           
           {#if isSubmitting}
             <div class="loading-indicator" in:fade={{ duration: 300 }}>
-              <div class="spinner"></div>
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="4" cy="12" r="3">
+                  <animate id="spinner_qFRN" begin="0;spinner_OcgL.end+0.25s" attributeName="cy" calcMode="spline" dur="0.6s" values="12;6;12" keySplines=".33,.66,.66,1;.33,0,.66,.33"/>
+                </circle>
+                <circle cx="12" cy="12" r="3">
+                  <animate begin="spinner_qFRN.begin+0.1s" attributeName="cy" calcMode="spline" dur="0.6s" values="12;6;12" keySplines=".33,.66,.66,1;.33,0,.66,.33"/>
+                </circle>
+                <circle cx="20" cy="12" r="3">
+                  <animate id="spinner_OcgL" begin="spinner_qFRN.begin+0.2s" attributeName="cy" calcMode="spline" dur="0.6s" values="12;6;12" keySplines=".33,.66,.66,1;.33,0,.66,.33"/>
+                </circle>
+              </svg>
               <span>Submitting...</span>
             </div>
           {/if}
           
           {#if submitSuccess}
-            <div class="success-message" in:scale={{ duration: 400, start: 0.8, easing: elasticOut }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div class="success-message" in:fade={{ duration: 300 }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                 <polyline points="22 4 12 14.01 9 11.01"></polyline>
               </svg>
@@ -401,18 +411,19 @@
   
   /* Glassmorphism panel */
   .glassmorphism {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(24px) saturate(200%);
+    -webkit-backdrop-filter: blur(24px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.3);
   }
   
   .rating-panel {
-    width: 320px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 
-                0 1px 8px rgba(0, 0, 0, 0.05),
-                0 20px 40px rgba(0, 0, 0, 0.08);
+    width: 280px;
+    border-radius: 14px;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.08), 
+      0 2px 16px rgba(0, 0, 0, 0.04),
+      0 0 1px rgba(0, 0, 0, 0.02);
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
@@ -425,19 +436,27 @@
   }
   
   .rating-header {
+    padding: 16px 16px 8px;
     display: flex;
-    justify-content: space-between; /* Changed to space-between to accommodate close button */
+    justify-content: space-between;
     align-items: center;
-    padding: 18px 20px;
-    border-bottom: 1px solid rgba(240, 240, 240, 0.5);
-    background: rgba(255, 255, 255, 0.7);
+    background: transparent;
   }
   
   .rating-header h3 {
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 500;
     color: #333;
+    flex: 1;
+    letter-spacing: -0.01em;
+  }
+  
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 8px;
   }
   
   /* Close button in the top right corner */
@@ -446,7 +465,7 @@
     border: none;
     color: #999;
     cursor: pointer;
-    padding: 8px;
+    padding: 6px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -458,6 +477,105 @@
     background-color: rgba(245, 245, 245, 0.8);
     color: #666;
     transform: rotate(90deg);
+  }
+
+  .reset-button {
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  
+  .reset-button:hover {
+    background-color: rgba(245, 245, 245, 0.8);
+    color: #666;
+  }
+
+  .reset-button svg {
+    transition: all 0.2s ease;
+  }
+
+  .reset-button:hover svg {
+    transform: rotate(180deg);
+  }
+
+  /* Tooltip styles */
+  [data-tooltip] {
+    position: relative;
+  }
+
+  [data-tooltip]:before {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    pointer-events: none;
+    margin-top: 5px;
+    z-index: 1000;
+  }
+
+  [data-tooltip]:hover:before {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .rating-content {
+    padding: 0 20px 20px;
+  }
+
+  /* Remove the border from rating-header */
+  .rating-header {
+    border-bottom: none;
+  }
+
+  /* Ensure tooltip container doesn't clip */
+  .rating-panel {
+    overflow: visible;
+  }
+
+  /* Adjust stars container spacing */
+  .stars-container {
+    margin-top: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* Adjust star button size */
+  .star-button svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 480px) {
+    .rating-header {
+      padding: 14px 14px 10px;
+    }
+
+    .rating-content {
+      padding: 0 16px 16px;
+    }
+
+    .star-button svg {
+      width: 24px;
+      height: 24px;
+    }
   }
   
   /* Minimized star button with reduced glow */
@@ -500,15 +618,15 @@
   }
   
   .rating-content {
-    padding: 24px;
+    padding: 20px;
   }
   
   /* Stars container with improved spacing */
   .stars-container {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 16px;
   }
   
   /* Enhanced star buttons with better animations */
@@ -575,85 +693,80 @@
     }
   }
   
-  /* Loading indicator with improved animation */
+  /* Loading indicator with new animation */
   .loading-indicator {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-top: 20px;
-    color: #666;
+    margin-top: 12px;
+    padding: 10px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
   
-  .spinner {
-    width: 22px;
-    height: 22px;
-    border: 3px solid rgba(0, 122, 255, 0.2);
-    border-radius: 50%;
-    border-top-color: #007AFF;
-    animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+  .loading-indicator svg {
+    width: 20px;
+    height: 20px;
   }
   
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
+  .loading-indicator circle {
+    fill: #333;
+    opacity: 0.8;
   }
-  
-  /* Enhanced message styles */
+
+  /* Enhanced message styles without borders */
   .success-message, .error-message {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
-    padding: 14px;
-    border-radius: 12px;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 13px;
     font-weight: 500;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    background: rgba(52, 199, 89, 0.08);
+    border: none;
   }
   
   .success-message {
-    background-color: rgba(52, 199, 89, 0.1);
     color: #34C759;
-    border: 1px solid rgba(52, 199, 89, 0.2);
   }
   
   .success-message svg {
-    animation: success-check 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+    opacity: 0.9;
   }
-  
-  @keyframes success-check {
-    0% {
-      transform: scale(0);
-      opacity: 0;
-    }
-    50% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
+
+  /* Reset success message specific styles */
+  .reset-success {
+    color: #34C759;
+    background: rgba(52, 199, 89, 0.08);
+  }
+
+  .reset-success svg {
+    opacity: 0.9;
+    width: 16px;
+    height: 16px;
   }
   
   .error-message {
-    background-color: rgba(255, 59, 48, 0.1);
+    background: rgba(255, 59, 48, 0.08);
     color: #FF3B30;
-    border: 1px solid rgba(255, 59, 48, 0.2);
+    border: none;
   }
   
-  /* Modern already rated display */
+  /* Modern already rated display with updated styles */
   .already-rated {
     text-align: center;
     color: #333;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 16px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
   }
   
   .rating-value {
@@ -663,14 +776,14 @@
   }
   
   .rating-number {
-    font-size: 32px;
+    font-size: 24px;
     font-weight: 600;
     color: #FFCC00;
     line-height: 1;
   }
   
   .rating-max {
-    font-size: 16px;
+    font-size: 14px;
     color: #999;
     font-weight: 500;
   }
@@ -680,17 +793,21 @@
     justify-content: center;
     gap: 4px;
     color: #FFCC00;
+    margin-top: -2px;
   }
   
   .rated-star {
     filter: drop-shadow(0 0 4px rgba(255, 204, 0, 0.2));
+    width: 18px;
+    height: 18px;
   }
   
   .rated-message {
     margin: 0;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     color: #666;
+    opacity: 0.9;
   }
   
   /* Fix for minimized star position */
@@ -704,93 +821,16 @@
   /* Responsive adjustments for mobile */
   @media (max-width: 480px) {
     .rating-panel {
-      width: 280px;
+      width: 260px;
     }
     
     .stars-container {
-      gap: 8px;
+      gap: 6px;
     }
     
     .star-button svg {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
     }
-  }
-  
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .reset-button {
-    background: transparent;
-    border: none;
-    color: #999;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    position: relative;
-  }
-  
-  .reset-button:hover {
-    background-color: rgba(245, 245, 245, 0.8);
-    color: #666;
-  }
-
-  .reset-button svg {
-    transition: all 0.2s ease;
-  }
-
-  .reset-button:hover svg {
-    transform: rotate(180deg);
-  }
-
-  /* Tooltip styles */
-  [data-tooltip] {
-    position: relative;
-  }
-
-  [data-tooltip]:before {
-    content: attr(data-tooltip);
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 6px 10px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    font-size: 12px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
-    pointer-events: none;
-    margin-top: 5px;
-    z-index: 1;
-  }
-
-  [data-tooltip]:hover:before {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  /* Reset success message styles */
-  .reset-success {
-    background-color: rgba(52, 199, 89, 0.1) !important;
-    color: #34C759 !important;
-    border: 1px solid rgba(52, 199, 89, 0.2) !important;
-    box-shadow: none !important;
-  }
-
-  .reset-success svg {
-    animation: none !important;
-    opacity: 0.8;
-    stroke: #34C759;
   }
 </style>
