@@ -641,6 +641,26 @@
     overflow: visible;
   }
   
+  .star-button:nth-child(1) svg { animation: star-bounce 2s infinite; animation-delay: 0s; }
+  .star-button:nth-child(2) svg { animation: star-bounce 2s infinite; animation-delay: 0.2s; }
+  .star-button:nth-child(3) svg { animation: star-bounce 2s infinite; animation-delay: 0.4s; }
+  .star-button:nth-child(4) svg { animation: star-bounce 2s infinite; animation-delay: 0.6s; }
+  .star-button:nth-child(5) svg { animation: star-bounce 2s infinite; animation-delay: 0.8s; }
+
+  .star-button.active svg,
+  .star-button:hover svg {
+    animation: none;
+  }
+  
+  @keyframes star-bounce {
+    0%, 20%, 100% {
+      transform: scale(1);
+    }
+    10% {
+      transform: scale(1.15);
+    }
+  }
+
   .star-button:hover, .star-button.active {
     transform: scale(1.15);
     filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.5));
