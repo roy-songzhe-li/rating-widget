@@ -50,10 +50,10 @@
   
   onMount(() => {
     try {
-      // Check if test mode is set
-      testMode = test === 'true';
+      // Add version logging
+      console.log('Rating Widget Version: 1.0.2 - Starry Eyes Update');
       
-      // Log test mode status
+      testMode = test === 'true';
       if (testMode) {
         console.log('Rating Widget initialized in TEST MODE');
       }
