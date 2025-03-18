@@ -45,3 +45,62 @@ If you have state that's important to retain within a component, consider creati
 import { writable } from 'svelte/store'
 export default writable(0)
 ```
+
+# Rating Widget
+
+A lightweight rating widget implemented as a web component that can be easily integrated into any website.
+
+## Installation
+
+Simply add the following script to your HTML file:
+
+```html
+<script src="https://roy-li.space/rating-widget.js?v=1.0.1"></script>
+<rating-widget></rating-widget>
+```
+
+## Important Note on Updates
+
+To ensure your users always get the latest version of the widget:
+
+1. **Always include a version query parameter**:
+   ```html
+   <script src="https://roy-li.space/rating-widget.js?v=1.0.1"></script>
+   ```
+   When a new version is released, update the version number in the URL.
+
+2. **Clear browser cache**: If you or your users are experiencing issues with the widget not reflecting the latest updates, clearing the browser cache can help:
+   - Chrome/Edge: Press Ctrl+F5 or Cmd+Shift+R (Mac)
+   - Firefox: Press Ctrl+Shift+R or Cmd+Shift+R (Mac)
+   - Safari: Press Option+Cmd+E to empty the cache, then Cmd+R to reload
+
+## Features
+
+- Simple star rating interface
+- Mobile-friendly design
+- Stores ratings in localStorage
+- Submits ratings to a backend API
+- Customizable appearance
+- Works in all modern browsers
+
+## Development
+
+To develop the widget locally:
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build the widget
+npm run build:widget
+
+# Deploy the widget
+npm run build
+```
+
+## License
+
+MIT
